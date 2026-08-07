@@ -14,32 +14,45 @@ router.get('/', async (req, res, next) => {
       q: z.string().optional(),
       industry: z.string().optional(),
       country: z.string().optional(),
-      category: z.enum([
-        'retention', 'monetization', 'pmf', 'cac', 'competition', 'team',
-        'timing', 'regulation', 'other', 'product', 'legal',
-        'unit_economics', 'operations', 'leadership', 'community',
-        'strategy', 'cashflow', 'platform_risk', 'execution', 'pricing',
-        'fraud', 'ethics',
-      ]).optional(),
-      status: z.enum(['failed', 'acquired', 'pivoted', 'zombie', 'operating', 'public']).optional(),
+      category: z.string().optional(),
+      status: z.string().optional(),
       sort: z.enum(['lifetime', 'funding', 'users', 'name']).optional().default('name'),
-      order: z.enum(['asc', 'desc']).optional().default('desc'),
+      order: z.enum(['asc', 'desc']).optional().default('asc'),
       page: z.coerce.number().int().min(1).optional().default(1),
-      limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+      limit: z.coerce.number().int().min(1).max(100).optional().default(24),
     });
 
     const params = querySchema.parse(req.query);
     const skip = (params.page - 1) * params.limit;
 
     const where = {};
-    if (params.industry) where.industry = params.industry;
-    if (params.country) where.country = params.country;
-    if (params.status) where.status = params.status;
-    if (params.category) {
-      where.failureReasons = { some: { category: params.category } };
+    if (params.status) {
+      where.status = params.status;
+    } else {
+      where.status = 'failed';
     }
+
+    if (params.industry) {
+      const words = params.industry.split(/[\/\s]+/).filter(w => w.length > 2);
+      if (words.length > 0) {
+        where.OR = [
+          ...(where.OR || []),
+          ...words.map(w => ({ industry: { contains: w, mode: 'insensitive' } }))
+        ];
+      }
+    }
+
+    if (params.country) {
+      where.country = { contains: params.country, mode: 'insensitive' };
+    }
+
+    if (params.category) {
+      where.failureReasons = { some: { category: { contains: params.category, mode: 'insensitive' } } };
+    }
+
     if (params.q) {
       where.OR = [
+        ...(where.OR || []),
         { name: { contains: params.q, mode: 'insensitive' } },
         { summary: { contains: params.q, mode: 'insensitive' } },
         { industry: { contains: params.q, mode: 'insensitive' } },

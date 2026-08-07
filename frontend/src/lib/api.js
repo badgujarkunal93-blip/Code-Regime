@@ -13,7 +13,8 @@ import {
   generateDynamicGhostChatResponse,
   getMockConfessions,
   addMockConfession,
-  upvoteMockConfession
+  upvoteMockConfession,
+  filterMockStartups
 } from './mockApi';
 import { getMockSecDashboard, mockSecLookup } from './secDashboardMock';
 import { getRandomQuestions } from './quizData';
@@ -100,20 +101,18 @@ const mockApiHandler = async (config) => {
 
     // Check if it's a single startup request (has slug)
     const match = url.match(/\/startups\/([^/?#]+)/);
-    if (match) {
+    if (match && match[1] !== 'search') {
       const slug = match[1];
       return {
         data: getStartupBySlug(slug)
       };
     }
 
-    return {
-      data: {
-        data: mockStartups,
-        total: mockStartups.length,
-        startups: mockStartups
-      }
-    };
+    // List startups with full filtering & pagination
+    const urlObj = new URL(url, 'http://localhost');
+    const queryParams = Object.fromEntries(urlObj.searchParams);
+    const mergedParams = { ...queryParams, ...(config.params || {}) };
+    return { data: filterMockStartups(mergedParams) };
   }
 
   // Mock /ai/risk-scan-v2 endpoint (must come before /ai/risk-scan)

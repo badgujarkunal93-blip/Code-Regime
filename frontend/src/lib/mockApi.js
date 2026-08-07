@@ -1358,3 +1358,124 @@ export function upvoteMockConfession(id) {
   return localConfessions.find(c => c.id === id) || { id, upvotes: 1 };
 }
 
+export function filterMockStartups(params = {}) {
+  const {
+    q = '',
+    industry = '',
+    status = '',
+    country = '',
+    category = '',
+    sort = 'name',
+    order = 'asc',
+    page = 1,
+    limit = 24
+  } = params;
+
+  let list = [...mockStartups];
+
+  // 1. Search Query Filter (q)
+  if (q && q.trim()) {
+    const qLower = q.toLowerCase().trim();
+    list = list.filter(s =>
+      (s.name && s.name.toLowerCase().includes(qLower)) ||
+      (s.industry && s.industry.toLowerCase().includes(qLower)) ||
+      (s.summary && s.summary.toLowerCase().includes(qLower)) ||
+      (s.tags && s.tags.some(t => t.toLowerCase().includes(qLower)))
+    );
+  }
+
+  // 2. Industry Filter (precise normalized matching)
+  if (industry && industry.trim()) {
+    const indLower = industry.toLowerCase().trim();
+    const normTarget = indLower.replace(/[\s\/-]+/g, '');
+    const parts = indLower.split('/').map(p => p.trim().replace(/[\s-]+/g, '')).filter(p => p.length > 2);
+
+    list = list.filter(s => {
+      if (!s.industry) return false;
+      const sInd = s.industry.toLowerCase();
+      const normInd = sInd.replace(/[\s\/-]+/g, '');
+
+      if (normInd.includes(normTarget) || normTarget.includes(normInd)) return true;
+      return parts.some(p => normInd.includes(p) || p.includes(normInd));
+    });
+  }
+
+  // 3. Status Filter
+  if (status && status.trim()) {
+    const statLower = status.toLowerCase().trim();
+    list = list.filter(s => s.status && s.status.toLowerCase().includes(statLower));
+  }
+
+  // 4. Country Filter
+  if (country && country.trim()) {
+    const countryLower = country.toLowerCase().trim();
+    list = list.filter(s => {
+      const sCountry = (s.country || 'USA').toLowerCase();
+      if (countryLower === 'usa') return sCountry.includes('usa') || sCountry.includes('us') || sCountry.includes('united states');
+      if (countryLower === 'europe') return sCountry.includes('uk') || sCountry.includes('europe') || sCountry.includes('germany') || sCountry.includes('france');
+      return sCountry.includes(countryLower);
+    });
+  }
+
+  // 5. Failure Category / Mode Filter (with smart synonyms)
+  if (category && category.trim()) {
+    const catLower = category.toLowerCase().trim();
+    const synMap = {
+      pmf: ['pmf', 'demand', 'market', 'user', 'fit', 'retention'],
+      unit_economics: ['unit', 'economics', 'margin', 'loss', 'cost'],
+      cashflow: ['cash', 'burn', 'runway', 'funding', 'capital', 'debt'],
+      competition: ['competition', 'competitor', 'rival', 'market share'],
+      legal: ['legal', 'regulation', 'regulatory', 'fraud', 'compliance'],
+      product: ['product', 'quality', 'bug', 'tech', 'hardware'],
+      timing: ['timing', 'early', 'late', 'macro']
+    };
+    const targetKeywords = synMap[catLower] || [catLower];
+
+    list = list.filter(s => {
+      const topCat = (s.topFailureReason || '').toLowerCase();
+      const summary = (s.summary || '').toLowerCase();
+      const reasonsText = (s.failureReasons || []).map(r => `${r.category} ${r.description}`).join(' ').toLowerCase();
+      const combined = `${topCat} ${summary} ${reasonsText}`;
+      return targetKeywords.some(kw => combined.includes(kw));
+    });
+  }
+
+  // 6. Sorting
+  const sortDirection = order === 'desc' ? -1 : 1;
+  list.sort((a, b) => {
+    let valA = a[sort];
+    let valB = b[sort];
+
+    if (sort === 'funding') {
+      valA = Number(a.fundingUsd || a.fundingInr || 0);
+      valB = Number(b.fundingUsd || b.fundingInr || 0);
+    } else if (sort === 'lifetime') {
+      valA = Number(a.lifetimeMonths || 0);
+      valB = Number(b.lifetimeMonths || 0);
+    } else if (sort === 'users') {
+      valA = Number(a.peakUsers || 0);
+      valB = Number(b.peakUsers || 0);
+    } else {
+      valA = String(a.name || '').toLowerCase();
+      valB = String(b.name || '').toLowerCase();
+    }
+
+    if (valA < valB) return -1 * sortDirection;
+    if (valA > valB) return 1 * sortDirection;
+    return 0;
+  });
+
+  const total = list.length;
+  const pageNum = Number(page) || 1;
+  const limitNum = Number(limit) || 24;
+  const startIndex = (pageNum - 1) * limitNum;
+  const paginatedData = list.slice(startIndex, startIndex + limitNum);
+
+  return {
+    data: paginatedData,
+    total,
+    page: pageNum,
+    limit: limitNum
+  };
+}
+

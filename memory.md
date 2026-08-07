@@ -492,6 +492,14 @@ cd backend && npm install
 - **Files:** `frontend/src/components/Sidebar.jsx`, `memory.md`.
 - **Verification:** Verified live in Chrome DevTools. Clicked `+` button, searched postmortems, clicked `Pin` on Kite AI — Kite was instantly added to sidebar featured vaults and persisted. Build clean (0 errors).
 
+### Session 9 — 2026-08-07 — Failure Explorer Filter Engine Overhaul (model: Gemini 3.6 Flash)
+- **Identified & Fixed Root Cause**: `mockApiHandler` in `frontend/src/lib/api.js` had an early return for `/startups` at L88 returning `mockStartups` unfiltered, bypassing parameter filtering.
+- **Built `filterMockStartups()`**: Added normalized industry matching, failure category synonym mapping (`pmf`, `unit_economics`, `cashflow`, `competition`, `legal`, `product`, `timing`), country normalization (`USA`, `India`, `Europe`), status isolation (`failed` default), and multi-column sorting (`funding`, `lifetime`, `users`, `name` asc/desc).
+- **Upgraded Backend Filtering (`backend/src/routes/startups.js`)**: Relaxed Zod query schema, added case-insensitive substring matching for `industry`, `country`, `category`, and defaulted `status` to `failed` for Explorer view.
+- **Files:** `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `backend/src/routes/startups.js`, `memory.md`.
+- **Verification:** Tested live in Chrome DevTools on `http://localhost:5173/explore`. Filtered by `Consumer Hardware` (22 results), `unit_economics` + `funding` desc (194 results). Build clean (0 errors).
+
+
 
 
 
