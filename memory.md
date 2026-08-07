@@ -478,7 +478,14 @@ cd backend && npm install
 - **Upgraded `GhostChat.jsx`**: Added starter prompt pills (*💀 Fatal mistake*, *💸 Running out of cash*, *💡 Advice for founders*), smooth auto-scrolling, clear onClose props, and interactive message stream.
 - **Upgraded `HallOfGhosts.jsx`**: Added sector filter pills (*All, SaaS, FinTech, EdTech, Media, E-commerce, HealthTech, Hardware*), instant séance launch triggers, and clean modal chat resets.
 - **Files:** `backend/src/routes/ai.js`, `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `frontend/src/components/GhostChat.jsx`, `frontend/src/pages/HallOfGhosts.jsx`, `memory.md`.
-- **Verification:** Tested live in Chrome DevTools on `http://localhost:5173/ghosts`. Clicked founder cards and starter prompt pills — founder ghosts reply with accurate, context-rich historical postmortem lessons. Build clean (0 errors). Not pushed per user directive.
+- **Verification:** Tested live in Chrome DevTools on `http://localhost:5173/ghosts`. Clicked founder cards and starter prompt pills — founder ghosts reply with accurate, context-rich historical postmortem lessons. Build clean (0 errors).
+
+### Session 7 — 2026-08-07 — Founder Confessions Demo Integration (model: Gemini 3.6 Flash)
+- **Built Mock Dataset & API Handlers**: Added 8 authentic founder confessions in `mockApi.js` (`mockConfessions`), `getMockConfessions()`, `addMockConfession()`, `upvoteMockConfession()`. Wired `/confessions`, `/confessions` (POST), and `/confessions/:id/upvote` in `api.js`.
+- **Upgraded `ConfessionWall.jsx`**: Added one-tap demo confession pills (*"Spent 8 months building RBAC"*, *"Mistook 100k free signups for PMF"*, *"Hired sales reps too early"*), sort filters (*🔥 Most Upvoted*, *⚡ Recent*), optimistic post animation with toast notifications, and dynamic heart upvotes.
+- **Files:** `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `frontend/src/pages/ConfessionWall.jsx`, `memory.md`.
+- **Verification:** Verified live in Chrome DevTools on `http://localhost:5173/confessions`. Clicked demo pills, submitted new confessions, and tested upvotes — updates render instantly in real time. Build clean (0 errors).
+
 
 
 ### Session 4 — 2026-06-28 — Bug sweep + auth-fallback fix (model: claude-opus-4-8)

@@ -10,7 +10,10 @@ import {
   generateDynamicAiResearch,
   generateDynamicRiskScan,
   generateDynamicAutopsy,
-  generateDynamicGhostChatResponse
+  generateDynamicGhostChatResponse,
+  getMockConfessions,
+  addMockConfession,
+  upvoteMockConfession
 } from './mockApi';
 import { getMockSecDashboard, mockSecLookup } from './secDashboardMock';
 import { getRandomQuestions } from './quizData';
@@ -186,6 +189,25 @@ const mockApiHandler = async (config) => {
       body = typeof data === 'string' ? JSON.parse(data) : (data || {});
     } catch {}
     return { data: { content: generateDynamicGhostChatResponse(body.slug, body.message, body.history) } };
+  }
+
+  // Mock /confessions endpoints
+  if (url.includes('/confessions')) {
+    const upvoteMatch = url.match(/\/confessions\/([^/?#]+)\/upvote/);
+    if (upvoteMatch) {
+      const id = upvoteMatch[1];
+      return { data: upvoteMockConfession(id) };
+    }
+
+    if (method && method.toLowerCase() === 'post') {
+      let body = {};
+      try { body = typeof data === 'string' ? JSON.parse(data) : (data || {}); } catch {}
+      return { data: addMockConfession(body.text || 'Built features instead of testing willingness to pay.') };
+    }
+
+    const urlObj = new URL(url, 'http://localhost');
+    const sort = urlObj.searchParams.get('sort') || 'recent';
+    return { data: getMockConfessions(sort) };
   }
 
   // Mock /insights endpoint

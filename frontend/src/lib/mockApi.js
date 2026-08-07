@@ -1280,3 +1280,81 @@ export function generateDynamicGhostChatResponse(slug = '', message = '', histor
   return `At ${ghost.name}, we learned the hard way. ${ghost.whyFailed} My advice for your journey: ${ghost.advice}`;
 }
 
+export const mockConfessions = [
+  {
+    id: 'confession-1',
+    text: "I spent 8 months building a multi-tenant enterprise RBAC system before we even had a single active user. Total waste of engineering time.",
+    upvotes: 142,
+    createdAt: "2026-07-28T10:15:00.000Z"
+  },
+  {
+    id: 'confession-2',
+    text: "We mistook 100k free tier signups for product-market fit. When we introduced a $15/mo paywall, 99.4% churned within 48 hours.",
+    upvotes: 218,
+    createdAt: "2026-07-25T14:30:00.000Z"
+  },
+  {
+    id: 'confession-3',
+    text: "I hired 4 senior enterprise sales reps before having a repeatable self-serve funnel. Burned $400k in 5 months with zero deals closed.",
+    upvotes: 95,
+    createdAt: "2026-07-20T09:12:00.000Z"
+  },
+  {
+    id: 'confession-4',
+    text: "We gave away 40% equity to a non-technical co-founder who left 6 months later without a vesting cliff in our cap table.",
+    upvotes: 310,
+    createdAt: "2026-07-15T18:45:00.000Z"
+  },
+  {
+    id: 'confession-5',
+    text: "I kept building new features requested by one vocal enterprise customer instead of fixing retention for the 95% core user base.",
+    upvotes: 184,
+    createdAt: "2026-07-10T11:20:00.000Z"
+  },
+  {
+    id: 'confession-6',
+    text: "We raised a $2M seed round and immediately moved into a fancy downtown office. That overhead killed us during the 2023 tech freeze.",
+    upvotes: 275,
+    createdAt: "2026-07-02T16:05:00.000Z"
+  },
+  {
+    id: 'confession-7',
+    text: "I lied to my team about our runway being 12 months when it was actually 6 weeks. Panic hiring destroyed our company culture.",
+    upvotes: 162,
+    createdAt: "2026-06-25T13:40:00.000Z"
+  },
+  {
+    id: 'confession-8',
+    text: "We spent $80k on Google Ads before having proper analytics event tracking. We had no idea which campaign brought actual paid users.",
+    upvotes: 129,
+    createdAt: "2026-06-18T08:50:00.000Z"
+  }
+];
+
+let localConfessions = [...mockConfessions];
+
+export function getMockConfessions(sort = 'recent') {
+  if (sort === 'top') {
+    return [...localConfessions].sort((a, b) => b.upvotes - a.upvotes);
+  }
+  return [...localConfessions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+export function addMockConfession(text) {
+  const newConfession = {
+    id: `confession-${Date.now()}`,
+    text,
+    upvotes: 1,
+    createdAt: new Date().toISOString()
+  };
+  localConfessions = [newConfession, ...localConfessions];
+  return newConfession;
+}
+
+export function upvoteMockConfession(id) {
+  localConfessions = localConfessions.map(c => 
+    c.id === id ? { ...c, upvotes: c.upvotes + 1 } : c
+  );
+  return localConfessions.find(c => c.id === id) || { id, upvotes: 1 };
+}
+
