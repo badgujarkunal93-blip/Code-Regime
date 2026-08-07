@@ -158,6 +158,16 @@ cd backend && npm install
 
 > Append newest entries at the **top**. Each entry: date, model, summary, files, verification, follow-ups.
 
+### Session 30 — 2026-08-07 — Knowledge Graph Interactive Overhaul (model: Gemini 3.6 Flash)
+- **Summary:** Redesigned and upgraded `KnowledgeGraph.jsx` into a high-fidelity interactive topology visualization:
+  - Built `generateGraphFromSeedData()` seeder mapping all 413+ startup postmortems into interconnected neural clusters (Startups 🏢, Failure Modes 💀, Industries 🌐, Investors 💰, Founders 👤).
+  - Added SVG drop-shadow glow filters (`feDropShadow`), D3 force simulation links, node hover animations, and scale/zoom/reset camera controls.
+  - Built live search filter bar and interactive category pills for real-time node filtering.
+  - Built side node inspector drawer displaying node metrics, connected links, startup logos, and direct "Read Full Autopsy" buttons.
+- **Files:** `frontend/src/pages/KnowledgeGraph.jsx`, `memory.md`.
+- **Verification:** Built frontend cleanly in 25.04s (`KnowledgeGraph-JA1Jlu34.js`). Pushed commit `2c45e12` to `origin/main`.
+- **Follow-up:** None.
+
 ### Session 29 — 2026-08-07 — Vercel SPA Deployment Configuration (model: Gemini 3.6 Flash)
 - **Summary:** Prepared PivotVault for instant zero-config Vercel deployment:
   - Created `frontend/vercel.json` & `vercel.json` with single-page application (SPA) rewrite rules to route all client-side navigation (`/explore`, `/scan`, `/autopsy`, `/startup/:slug`) to `index.html`.
