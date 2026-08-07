@@ -158,6 +158,14 @@ cd backend && npm install
 
 > Append newest entries at the **top**. Each entry: date, model, summary, files, verification, follow-ups.
 
+### Session 29 — 2026-08-07 — Vercel SPA Deployment Configuration (model: Gemini 3.6 Flash)
+- **Summary:** Prepared PivotVault for instant zero-config Vercel deployment:
+  - Created `frontend/vercel.json` & `vercel.json` with single-page application (SPA) rewrite rules to route all client-side navigation (`/explore`, `/scan`, `/autopsy`, `/startup/:slug`) to `index.html`.
+  - Configured Firebase environment variables sync (`VITE_FIREBASE_*` and `VITE_DEMO_MODE=true`).
+- **Files:** `vercel.json`, `frontend/vercel.json`, `memory.md`.
+- **Verification:** Verified SPA route rewrites and pushed commit to `origin/main`.
+- **Follow-up:** None.
+
 ### Session 28 — 2026-08-07 — 413 Startups Firestore Seeder & Direct Firestore Data Layer (model: Gemini 3.6 Flash)
 - **Summary:** Built complete Firestore data architecture for the 413+ startup postmortems dataset:
   - Created `frontend/src/lib/firebaseSeed.js`: Batch upload seeder function `seedFirestoreCompanies()` that pushes all 413 startup failure cases directly into the Firestore `companies` collection.
