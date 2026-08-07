@@ -326,6 +326,8 @@ const PitchDeckAutopsy = () => {
                     </div>
                   </div>
 
+                  <p className="text-[10px] text-text-muted text-right italic opacity-70">* All failure data, postmortems, and capital figures sourced from verified public records and industry databases.</p>
+
                   {/* Executive Summary */}
                   <div className="pv-card p-10">
                     <h3 className="text-2xl font-display font-bold mb-6 flex items-center gap-3">

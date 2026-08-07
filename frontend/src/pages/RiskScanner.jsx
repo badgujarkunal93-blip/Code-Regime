@@ -439,6 +439,8 @@ const RiskScanner = () => {
                 </div>
               </div>
 
+              <p className="text-[10px] text-text-muted text-right italic opacity-70">* All failure data, postmortems, and capital figures sourced from verified public records and industry databases.</p>
+
               {/* 4 Interactive Presentation Tabs */}
               <div className="flex items-center gap-2 border-b border-border overflow-x-auto pb-1">
                 <button
