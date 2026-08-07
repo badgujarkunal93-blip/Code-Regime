@@ -161,6 +161,7 @@ cd backend && npm install
 ### Session 29 — 2026-08-07 — Vercel SPA Deployment Configuration (model: Gemini 3.6 Flash)
 - **Summary:** Prepared PivotVault for instant zero-config Vercel deployment:
   - Created `frontend/vercel.json` & `vercel.json` with single-page application (SPA) rewrite rules to route all client-side navigation (`/explore`, `/scan`, `/autopsy`, `/startup/:slug`) to `index.html`.
+  - Updated `buildCommand` to `"npm run build"` and `outputDirectory` to `"dist"` to prevent double-prefixing when `Root Directory: frontend` is selected in Vercel UI.
   - Configured Firebase environment variables sync (`VITE_FIREBASE_*` and `VITE_DEMO_MODE=true`).
 - **Files:** `vercel.json`, `frontend/vercel.json`, `memory.md`.
 - **Verification:** Verified SPA route rewrites and pushed commit to `origin/main`.
