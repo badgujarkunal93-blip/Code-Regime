@@ -721,26 +721,27 @@ Regarding your follow-up inquiry on **"${idea}"**:
     };
   }
 
-  const brief = `## FORENSIC RISK REPORT: ${idea.toUpperCase()}
+  const formattedTeamScale = (teamSize || '').toLowerCase().includes('member') || (teamSize || '').toLowerCase().includes('team')
+    ? teamSize
+    : `${teamSize || '2'} Team Members`;
 
-Our startup failure database has cross-referenced **"${idea}"** against **413 historical postmortems** in the **${industry}** sector.
+  const brief = `## FORENSIC AUDIT REPORT: ${idea.toUpperCase()}
 
-### 1. Headline Risk Index: ${riskScore}/100 (${riskScore > 70 ? 'HIGH RISK' : riskScore > 50 ? 'MODERATE RISK' : 'LOW RISK'})
-* **Target Audience**: ${audience}
-* **Monetization Strategy**: ${revenueModel}
-* **Team Scale**: ${teamSize} member(s)
+Cross-referenced **"${idea}"** against **413 verified postmortems** in **${industry}**.
+
+### 1. Headline Audit Profile: ${riskScore}/100 (${riskScore > 70 ? 'HIGH RISK' : riskScore > 50 ? 'MODERATE RISK' : 'LOW RISK'})
+* **Target Segment**: ${audience}
+* **Monetization Model**: ${revenueModel}
+* **Team Scale**: ${formattedTeamScale}
 
 ### 2. Failure Vector Breakdown
 * **Customer Acquisition (CAC)**: **${cac}% Risk** — High acquisition cost relative to customer lifetime value.
 * **Cohort Retention**: **${retention}% Churn Risk** — Risk of steep drop-off after month 1.
-* **Monetization & Unit Margin**: **${monetization}% Vulnerability** — Subsidized pricing margin risks.
+* **Monetization & Unit Margin**: **${monetization}% Vulnerability** — Margin compression risk under scale.
 * **Market Competition**: **${competition}% Threat** — Saturation by incumbent offerings.
-* **Market Timing**: **${timing}% Sensitivity** — Macro market readiness.
+* **Market Timing**: **${timing}% Sensitivity** — Macro market adoption readiness.
 
-### 3. Historical Failure Precedents (${relatedList[0]?.industry || industry})
-${relatedList.map(s => `* **${s.name}** (${s.industry}, ${s.funding}): ${s.summary}`).join('\n')}
-
-### 4. Strategic De-Risking Action Plan
+### 3. Strategic De-Risking Action Plan
 * **Pre-Build Validation**: Conduct 30+ discovery interviews with target users (**${audience}**) asking about past workflow pain points and spending behavior.
 * **Unit Economic Checkpoint**: Calculate true gross margin per customer before allocating capital to marketing.
 * **Cohort Retention Moat**: Do not scale paid user acquisition until Day-30 retention exceeds 30%.`;
@@ -1160,3 +1161,122 @@ Our Pitch Deck Pathology Engine has cross-referenced your deck content against *
 }
 
 export const mockPitchDeckAutopsy = generateDynamicAutopsy();
+
+export function generateDynamicGhostChatResponse(slug = '', message = '', history = []) {
+  const msg = (message || '').toLowerCase();
+  const cleanSlug = (slug || 'default').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  const startupDatabase = {
+    kite: {
+      name: 'Kite',
+      industry: 'AI Dev Tools',
+      funding: '$17M',
+      deathYear: 2021,
+      story: 'We built AI code completions years before ChatGPT and Copilot. Our tech was ahead of its time, but we made the editor engine completely free and failed to build an enterprise sales motion before Copilot launched.',
+      whyFailed: 'We couldn\'t convert our 500,000 free developer users into paying customers fast enough. When GitHub introduced Copilot at $10/month integrated right into VS Code, our distribution channel was completely choked off.',
+      burnInfo: 'We raised $17M from top VCs like Trinity Ventures and Craft Ventures. Most of it went to training customized language models on AWS GPU clusters, which cost over $150k per month.',
+      advice: 'Never rely on free-tier developer love alone. Build enterprise security compliance, SSO, and team billing on day one. Distribution beats product elegance every single time.'
+    },
+    parse: {
+      name: 'Parse',
+      industry: 'B2B SaaS / Dev Infrastructure',
+      funding: '$7M',
+      deathYear: 2017,
+      story: 'We pioneered Backend-as-a-Service for mobile apps. Facebook acquired us for $85M in 2013, but corporate priorities shifted toward ad monetization and developer APIs were sunsetted.',
+      whyFailed: 'We relied on a single corporate acquirer to fund host infrastructure. When Facebook pivoted focus toward video and ad formats, Parse was shut down despite serving over 500,000 active mobile apps.',
+      burnInfo: 'We raised $7M before being acquired by Facebook for $85M. The real lesson is that getting acquired isn\'t always the end of the story — platform lock-in can destroy a thriving developer ecosystem.',
+      advice: 'Maintain independent infrastructure controls. If you build on top of a third-party platform or sell to a giant, ensure your open-source fallback strategy is rock solid.'
+    },
+    fast: {
+      name: 'Fast',
+      industry: 'FinTech / Checkout',
+      funding: '$124M',
+      deathYear: 2022,
+      story: 'We set out to build the fastest 1-click checkout for e-commerce. We raised over $120M from Stripe and Index Ventures, but our cash burn outpaced our actual revenue growth by 100x.',
+      whyFailed: 'We were burning over $10M per month on massive tech-conference sponsorships, executive salaries, and marketing blitzes while generating under $50k in total annual revenue.',
+      burnInfo: 'We burned through $124M in under 24 months. We mistook venture capital raised for real commercial traction and product-market fit.',
+      advice: 'Capital raised is not a metric of success. Validate net processing fee revenue before scaling sales reps or spending millions on brand advertising.'
+    },
+    quibi: {
+      name: 'Quibi',
+      industry: 'Media / Streaming',
+      funding: '$1.75B',
+      deathYear: 2020,
+      story: 'We raised $1.75B to revolutionize short-form mobile video with Hollywood production quality. We launched right as COVID lockdowns hit, and mobile-only viewing clashed with stay-at-home screen habits.',
+      whyFailed: 'We blocked users from taking screenshots or sharing clips on social media to protect copyright, killing viral organic growth. Plus, TikTok and YouTube offered free, personalized content that users preferred.',
+      burnInfo: 'We spent $1.75B. Over $100M was spent on premium Hollywood content contracts ($100k per minute) before proving users would pay $4.99/month for mobile-only episodes.',
+      advice: 'Listen to user behavior, not your own executive pedigree. If your users want social sharing and TV casting, don\'t lock your content inside a walled garden.'
+    },
+    theranos: {
+      name: 'Theranos',
+      industry: 'HealthTech',
+      funding: '$700M',
+      deathYear: 2018,
+      story: 'We claimed to run hundreds of blood tests from a single pinprick of blood. We signed massive retail partnerships with Walgreens, but our underlying proprietary hardware never worked reliably.',
+      whyFailed: 'We prioritized secrecy, PR narrative, and board prestige over peer-reviewed scientific validation and FDA compliance. The gap between marketing claims and physical reality led to collapse.',
+      burnInfo: 'We raised $700M at a peak $9B valuation without ever publishing peer-reviewed data in scientific journals.',
+      advice: 'In healthcare and deep tech, intellectual honesty is everything. Never fake technical validation — lives and regulatory compliance depend on truth.'
+    },
+    byjus: {
+      name: 'Byju\'s',
+      industry: 'EdTech',
+      funding: '$5.8B',
+      deathYear: 2024,
+      story: 'We became India\'s most valuable edtech startup valued at $22B. We embarked on a massive debt-funded global acquisition spree, buying Aakash, WhiteHat Jr, and Epic.',
+      whyFailed: 'Aggressive sales tactics, debt-funded acquisitions, delayed financial audits, and governance breakdowns led to severe liquidity default when schools reopened post-pandemic.',
+      burnInfo: 'We raised $5.8B in equity and $1.2B in Term Loan B debt. Over-leveraging during cheap capital cycles led to catastrophic debt service default.',
+      advice: 'Acquisitions cannot fix broken organic retention. Build a sustainable core unit economic engine before attempting multi-billion dollar M&A.'
+    },
+    webvan: {
+      name: 'Webvan',
+      industry: 'E-Commerce / Grocery Delivery',
+      funding: '$800M',
+      deathYear: 2001,
+      story: 'We built automated mega-warehouses across 26 cities for 30-minute online grocery delivery during the dot-com era.',
+      whyFailed: 'We built $30M automated fulfillment centers in cities before testing customer order density. Delivery routes were sparse, resulting in negative margins on every delivery.',
+      burnInfo: 'We spent $800M in 24 months. Infrastructure capex outpaced gross order margins by a factor of ten.',
+      advice: 'Do non-scalable things first. Test local route density with manual vans before investing tens of millions in automated fulfillment centers.'
+    }
+  };
+
+  let ghost = null;
+  for (const [key, g] of Object.entries(startupDatabase)) {
+    if (cleanSlug.includes(key) || key.includes(cleanSlug)) {
+      ghost = g;
+      break;
+    }
+  }
+
+  if (!ghost) {
+    const capitalizedName = slug ? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ') : 'Our Startup';
+    ghost = {
+      name: capitalizedName,
+      industry: 'Technology',
+      funding: '$15M',
+      deathYear: 2022,
+      story: `We set out to build ${capitalizedName} to transform the industry. We raised capital and grew fast, but ran out of runway before finding repeatable product-market fit.`,
+      whyFailed: `We struggled with high customer acquisition costs relative to retention. Our burn rate exceeded net revenue, and when market conditions tightened, we couldn't raise our next round.`,
+      burnInfo: `We burned through our funding in under 2 years. Most of it went to customer acquisition marketing and engineering team expansion before proving unit economics.`,
+      advice: `Focus relentlessly on Day-30 retention and positive contribution margins. Don't scale paid marketing until your organic retention curve flattens.`
+    };
+  }
+
+  if (msg.includes('why') || msg.includes('fail') || msg.includes('wrong') || msg.includes('happen') || msg.includes('shut')) {
+    return `Looking back from the grave, our downfall at ${ghost.name} came down to one core flaw: ${ghost.whyFailed}`;
+  }
+
+  if (msg.includes('fund') || msg.includes('money') || msg.includes('burn') || msg.includes('raise') || msg.includes('investor') || msg.includes('cost')) {
+    return `Here's the honest truth about our finances: ${ghost.burnInfo}`;
+  }
+
+  if (msg.includes('advice') || msg.includes('different') || msg.includes('lesson') || msg.includes('learn') || msg.includes('recommend') || msg.includes('founder')) {
+    return `If I could speak to every founder building in ${ghost.industry} today, I'd say: ${ghost.advice}`;
+  }
+
+  if (msg.includes('story') || msg.includes('who') || msg.includes('what') || msg.includes('about') || msg.includes('hi') || msg.includes('hello')) {
+    return `${ghost.story}`;
+  }
+
+  return `At ${ghost.name}, we learned the hard way. ${ghost.whyFailed} My advice for your journey: ${ghost.advice}`;
+}
+

@@ -62,7 +62,6 @@ const Navbar = () => {
     { name: 'Compare', path: '/compare', icon: GitCompare },
     { name: 'Insights', path: '/insights', icon: BarChart2 },
     { name: 'Graph', path: '/graph', icon: Share2 },
-    { name: 'Quiz', path: '/quiz', icon: Brain },
     { name: 'Confessions', path: '/confessions', icon: MessageSquare },
   ];
 

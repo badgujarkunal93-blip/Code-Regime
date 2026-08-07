@@ -217,7 +217,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
 
   // Direct Learn Items
   const learnItems = [
-    { name: 'Failure Quiz', path: '/quiz', icon: Brain },
     { name: 'Founder Confessions', path: '/confessions', icon: MessageSquare },
   ];
 

@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const { z } = require('zod');
 const rateLimit = require('express-rate-limit');
 const { searchWeb } = require('../services/searchService');
+const { runRiskScanV2, trainBinaryClassifier } = require('../services/riskScannerV2');
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -1102,6 +1103,28 @@ ${CONSULTANT_BRIEF_INSTRUCTION}`;
   }
 });
 
+function generateSmartGhostChatFallback(startup, message = '') {
+  const name = startup?.name || 'our startup';
+  const ind = startup?.industry || 'tech';
+  const msg = (message || '').toLowerCase();
+
+  const failureDesc = startup?.failureReasons?.map(r => r.description).join('. ') 
+    || startup?.summary 
+    || 'We ran out of capital before reaching sustainable unit economics.';
+
+  if (msg.includes('why') || msg.includes('fail') || msg.includes('wrong') || msg.includes('happen') || msg.includes('shut')) {
+    return `Looking back from the void, our downfall at ${name} came down to one core flaw: ${failureDesc} We ignored the warning signs until it was too late.`;
+  }
+  if (msg.includes('fund') || msg.includes('money') || msg.includes('burn') || msg.includes('raise') || msg.includes('investor')) {
+    return `At ${name}, we raised capital thinking growth would solve our unit economics. But capital only accelerated our burn rate when product-market fit was leaky.`;
+  }
+  if (msg.includes('advice') || msg.includes('different') || msg.includes('lesson') || msg.includes('learn') || msg.includes('recommend')) {
+    return `If I could speak to every founder building in ${ind} today, I'd say: ruthlessly validate willingness-to-pay on day one instead of relying on vanity engagement metrics. Don't repeat my mistakes.`;
+  }
+
+  return `As the founder of ${name}, I can tell you that build-at-all-costs culture killed us. ${failureDesc} What specific part of our story are you trying to learn from?`;
+}
+
 // POST /api/ai/ghost-chat
 router.post('/ghost-chat', async (req, res, next) => {
 
@@ -1277,6 +1300,46 @@ ${CONSULTANT_BRIEF_INSTRUCTION}`;
     console.error('Competitor comparison error:', err);
     const fallbackAnalysis = await generateSmartCompareFallback(req.body?.idea || '', { industry: req.body?.industry });
     res.json(fallbackAnalysis);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// RISK SCAN V2 — Real DB-driven binary risk classifier
+// ═══════════════════════════════════════════════════════════════════════
+
+const riskScanV2Schema = z.object({
+  idea: z.string().min(10).max(500),
+  industry: z.string().min(2).max(100),
+  country: z.string().max(100).optional(),
+  teamSize: z.coerce.number().int().min(1).max(10000).optional(),
+  fundingStage: z.string().max(50).optional(),
+  targetUsers: z.string().max(300).optional(),
+  businessModel: z.string().max(200).optional(),
+  description: z.string().max(2000).optional(),
+});
+
+const riskScanV2Limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: { error: 'Too many v2 scan requests. Please wait.', code: 'RATE_LIMITED' },
+});
+
+// Train classifier at startup (async, non-blocking)
+trainBinaryClassifier().catch(err => console.warn('Initial classifier training failed:', err.message));
+
+router.post('/risk-scan-v2', riskScanV2Limiter, async (req, res) => {
+  try {
+    const validated = riskScanV2Schema.parse(req.body);
+    console.log('[RiskScanV2] Scanning:', validated.idea?.slice(0, 60));
+
+    const result = await runRiskScanV2(validated);
+    res.json(result);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid input', details: err.errors });
+    }
+    console.error('[RiskScanV2] Error:', err);
+    res.status(500).json({ error: 'Risk scan v2 failed', message: err.message });
   }
 });
 

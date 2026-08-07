@@ -37,7 +37,6 @@ const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const BookmarksPage = lazy(() => import('./pages/BookmarksPage'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
-const FailureQuiz = lazy(() => import('./pages/FailureQuiz'));
 const FounderPlaybook = lazy(() => import('./pages/FounderPlaybook'));
 const CompareStartups = lazy(() => import('./pages/CompareStartups'));
 const FinancialIntelligence = lazy(() => import('./pages/FinancialIntelligence'));
@@ -191,7 +190,6 @@ function AppContent() {
                     <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
                     <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
                     <Route path="/playbook" element={<ProtectedRoute><FounderPlaybook /></ProtectedRoute>} />
-                    <Route path="/quiz" element={<FailureQuiz />} />
                     <Route path="/compare" element={<CompareStartups />} />
                     <Route path="/financials" element={<FinancialIntelligence />} />
                     <Route path="/ghosts" element={<HallOfGhosts />} />

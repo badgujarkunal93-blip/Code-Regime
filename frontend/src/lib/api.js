@@ -9,7 +9,8 @@ import {
   generateMockExternalSources,
   generateDynamicAiResearch,
   generateDynamicRiskScan,
-  generateDynamicAutopsy
+  generateDynamicAutopsy,
+  generateDynamicGhostChatResponse
 } from './mockApi';
 import { getMockSecDashboard, mockSecLookup } from './secDashboardMock';
 import { getRandomQuestions } from './quizData';
@@ -112,6 +113,44 @@ const mockApiHandler = async (config) => {
     };
   }
 
+  // Mock /ai/risk-scan-v2 endpoint (must come before /ai/risk-scan)
+  if (url.includes('/ai/risk-scan-v2')) {
+    let body = {};
+    try { body = typeof data === 'string' ? JSON.parse(data) : (data || {}); } catch {}
+    const industry = body.industry || 'SaaS';
+    const teamSize = body.teamSize || 5;
+    const stage = body.fundingStage || 'seed';
+    return {
+      data: {
+        overallRiskScore: 62,
+        riskLevel: 'MODERATE RISK',
+        verdict: `MODERATE RISK (62/100) — 65% of ${industry} startups with teams of ${teamSize} at ${stage} stage failed within 24 months. Your profile falls in a common risk bracket.`,
+        topRiskFactors: [
+          { factor: 'Industry Failure Rate', score: 68, contribution: '25%', insight: `27 of 41 companies (66%) in ${industry} failed.` },
+          { factor: 'Team Size Risk', score: 71, contribution: '15%', insight: `${teamSize <= 3 ? '73' : '58'}% of companies with team size ${teamSize <= 3 ? '1-3' : '4-10'} in ${industry} failed.` },
+          { factor: 'Funding Stage Risk', score: 60, contribution: '20%', insight: `61% of ${stage}-funded companies in ${industry} failed.` },
+        ],
+        parameterBreakdown: {
+          industry: { score: 68, failedCount: 27, totalCount: 41, failureRate: 0.66, avgLifetimeMonths: 34, insight: `27 of 41 companies (66%) in ${industry} failed. Average lifespan: 34 months.` },
+          teamSize: { score: 71, failedCount: 22, totalCount: 31, failureRate: 0.71, bracket: teamSize <= 3 ? '1-3' : '4-10', insight: `71% of companies with team size ${teamSize <= 3 ? '1-3' : '4-10'} in ${industry} failed.` },
+          funding: { score: 60, failedCount: 18, totalCount: 30, failureRate: 0.6, stage, insight: `60% of ${stage}-funded companies in ${industry} failed.` },
+          timing: { score: 55, recentFailureRate: 0.58, historicalRate: 0.62, trending: 'decreasing', insight: `Failure rate in ${industry} is decreasing (recent: 58% vs historical: 62%).` },
+        },
+        classifierPrediction: { failureProbability: 0.64, confidence: 'medium', modelType: 'binary logistic (trained on 612 companies)' },
+        failureCategoryPrediction: {
+          topCategory: 'pmf',
+          probability: 0.28,
+          distribution: { pmf: 0.28, monetization: 0.22, competition: 0.18, team: 0.12, cac: 0.10, timing: 0.06, other: 0.04 },
+        },
+        historicalMatches: [
+          { name: 'Kite', slug: 'kite', industry: 'AI Dev Tools', similarity: 0.82, fundingUsd: 17000000, lifetimeMonths: 60, summary: 'AI code assistant that failed to convert free users to paid.' },
+          { name: 'Parse', slug: 'parse', industry: 'Developer Tools', similarity: 0.71, fundingUsd: 7000000, lifetimeMonths: 48, summary: 'Mobile backend platform that was acquired then shut down.' },
+        ],
+        meta: { sampleSize: 612, failedCompanies: 412, operatingCompanies: 200, dataSource: 'PivotVault failure + success database', similarityMethod: 'keyword' },
+      },
+    };
+  }
+
   // Mock /ai/risk-scan endpoint
   if (url.includes('/ai/risk-scan')) {
     let body = {};
@@ -138,6 +177,15 @@ const mockApiHandler = async (config) => {
       body = typeof data === 'string' ? JSON.parse(data) : (data || {});
     } catch {}
     return { data: generateDynamicAutopsy(body) };
+  }
+
+  // Mock /ai/ghost-chat endpoint
+  if (url.includes('/ai/ghost-chat')) {
+    let body = {};
+    try {
+      body = typeof data === 'string' ? JSON.parse(data) : (data || {});
+    } catch {}
+    return { data: { content: generateDynamicGhostChatResponse(body.slug, body.message, body.history) } };
   }
 
   // Mock /insights endpoint

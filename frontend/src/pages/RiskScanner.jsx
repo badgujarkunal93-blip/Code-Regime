@@ -16,13 +16,70 @@ const RiskScanner = () => {
   const { profile, getSharedHistory, recordAnalysis } = useWorkspace();
   const [step, setStep] = useState('form'); // form | scanning | result
   const [activeTab, setActiveTab] = useState('brief'); // brief | precedents | battleground | pivots
+  const audienceOptions = [
+    'Developers & Engineering Leads',
+    'Small & Medium Businesses (SMBs)',
+    'Enterprise Executives & CTOs',
+    'Consumers (Gen-Z & Millennials)',
+    'High School & College Students',
+    'E-commerce Merchants & Brands',
+    'Healthcare Providers & Patients',
+    'Urban Professionals & Remote Workers',
+    'Independent Content Creators',
+    'Custom Audience...'
+  ];
+
+  const industryOptions = [
+    'SaaS / DevTools & B2B Software',
+    'FinTech / Payments & Crypto',
+    'EdTech / E-Learning Platforms',
+    'E-commerce / D2C & Retail Tech',
+    'Healthcare / HealthTech & Digital Health',
+    'AI / Machine Learning & Data Infrastructure',
+    'Consumer Social & Media Apps',
+    'Logistics, Mobility & Delivery',
+    'Hardware, Robotics & IoT',
+    'Gaming, Web3 & Entertainment',
+    'ClimateTech & Clean Energy'
+  ];
+
+  const revenueModelOptions = [
+    'Subscription (SaaS / Recurring)',
+    'Freemium (Free Tier + Paid Upgrades)',
+    'Transaction Fee / Take-Rate (%)',
+    'Enterprise Licensing & Contracts',
+    'Usage-Based / Pay-As-You-Go',
+    'Marketplace Commission',
+    'Ad-Supported / Media Sponsor'
+  ];
+
+  const teamSizeOptions = [
+    '1 (Solo Founder)',
+    '2 - 3 (Co-Founding Team)',
+    '4 - 10 (Early Core Team)',
+    '11 - 50 (Growth Stage Team)',
+    '50+ (Scaleup Organization)'
+  ];
+
+  const countryOptions = [
+    'United States & North America',
+    'Global / Distributed',
+    'India & South Asia',
+    'Europe & UK',
+    'Latin America',
+    'Southeast Asia & APAC'
+  ];
+
   const [formData, setFormData] = useState({
     idea: profile.idea || '',
-    audience: profile.audience || '',
-    revenueModel: profile.businessModel || 'Subscription',
-    teamSize: profile.teamSize || '2',
-    industry: profile.industry || 'SaaS'
+    audience: profile.audience || 'Developers & Engineering Leads',
+    revenueModel: profile.businessModel || 'Subscription (SaaS / Recurring)',
+    teamSize: profile.teamSize || '2 - 3 (Co-Founding Team)',
+    industry: profile.industry || 'SaaS / DevTools & B2B Software',
+    country: 'United States & North America'
   });
+  const [isCustomAudience, setIsCustomAudience] = useState(false);
+  const [customAudience, setCustomAudience] = useState('');
 
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,33 +95,37 @@ const RiskScanner = () => {
       label: '⚡ AI Code Optimizer (SaaS)',
       idea: 'AI-powered static code analysis & automated refactoring tool for engineering teams',
       audience: 'Developers & Engineering Leads',
-      revenueModel: 'Subscription',
-      teamSize: '2',
-      industry: 'SaaS'
+      revenueModel: 'Subscription (SaaS / Recurring)',
+      teamSize: '2 - 3 (Co-Founding Team)',
+      industry: 'SaaS / DevTools & B2B Software',
+      country: 'United States & North America'
     },
     {
       label: '💳 1-Click Crypto Checkout (FinTech)',
       idea: 'Sub-second crypto payment gateway for Shopify merchants with zero gas fees',
-      audience: 'E-commerce Merchants',
-      revenueModel: 'Transaction Fee',
-      teamSize: '3',
-      industry: 'FinTech'
+      audience: 'E-commerce Merchants & Brands',
+      revenueModel: 'Transaction Fee / Take-Rate (%)',
+      teamSize: '2 - 3 (Co-Founding Team)',
+      industry: 'FinTech / Payments & Crypto',
+      country: 'Global / Distributed'
     },
     {
       label: '🎓 AI Homework Helper (EdTech)',
       idea: 'Personalized AI tutor app for high school math & science problem solving',
-      audience: 'High School Students',
-      revenueModel: 'Freemium',
-      teamSize: '1',
-      industry: 'EdTech'
+      audience: 'High School & College Students',
+      revenueModel: 'Freemium (Free Tier + Paid Upgrades)',
+      teamSize: '1 (Solo Founder)',
+      industry: 'EdTech / E-Learning Platforms',
+      country: 'United States & North America'
     },
     {
       label: '🚚 10-Min Drone Grocery (Logistics)',
       idea: 'Ultra-fast autonomous drone delivery for local organic groceries in urban centers',
-      audience: 'Urban Professionals',
-      revenueModel: 'Delivery Fee',
-      teamSize: '5',
-      industry: 'E-commerce'
+      audience: 'Urban Professionals & Remote Workers',
+      revenueModel: 'Transaction Fee / Take-Rate (%)',
+      teamSize: '4 - 10 (Early Core Team)',
+      industry: 'Logistics, Mobility & Delivery',
+      country: 'United States & North America'
     }
   ];
 
@@ -74,8 +135,11 @@ const RiskScanner = () => {
       audience: p.audience,
       revenueModel: p.revenueModel,
       teamSize: p.teamSize,
-      industry: p.industry
+      industry: p.industry,
+      country: p.country || 'United States & North America'
     });
+    setIsCustomAudience(false);
+    setCustomAudience('');
   };
 
   const loadingMessages = [
@@ -88,6 +152,9 @@ const RiskScanner = () => {
 
   const handleScan = async (e) => {
     if (e) e.preventDefault();
+    const finalAudience = isCustomAudience ? (customAudience || 'Target Users') : formData.audience;
+    const finalFormData = { ...formData, audience: finalAudience };
+
     setStep('scanning');
     setLoading(true);
     let msgIdx = 0;
@@ -98,7 +165,7 @@ const RiskScanner = () => {
 
     try {
       const response = await api.post('/ai/risk-scan', {
-        ...formData,
+        ...finalFormData,
         history: getSharedHistory([], 'Risk Scanner'),
       });
 
@@ -288,61 +355,134 @@ const RiskScanner = () => {
 
               <form onSubmit={handleScan} className="pv-card p-8 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">Startup Idea</label>
+                  <label className="text-xs font-bold uppercase text-text-secondary tracking-widest flex items-center justify-between">
+                    <span>Startup Idea / Product Description</span>
+                    <span className="text-[10px] text-accent font-normal uppercase">Required</span>
+                  </label>
                   <textarea
                     required
-                    placeholder="Describe your product and the core problem it solves..."
+                    placeholder="Describe your startup product, core feature, value proposition, and the main problem it solves..."
                     rows={4}
-                    className="pv-field"
+                    className="pv-field text-sm leading-relaxed"
                     value={formData.idea}
                     onChange={e => setFormData({...formData, idea: e.target.value})}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Grid Row 1: Target Audience & Industry/Sector */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Target Audience Dropdown */}
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">Target Audience</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Developers & Engineering Leads"
-                      className="pv-field"
-                      value={formData.audience}
-                      onChange={e => setFormData({...formData, audience: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">Industry</label>
+                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">
+                      Target Audience / Customer Segment
+                    </label>
                     <select
-                      className="pv-field"
+                      className="pv-field text-sm"
+                      value={isCustomAudience ? 'Custom Audience...' : formData.audience}
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (val === 'Custom Audience...') {
+                          setIsCustomAudience(true);
+                        } else {
+                          setIsCustomAudience(false);
+                          setFormData({ ...formData, audience: val });
+                        }
+                      }}
+                    >
+                      {audienceOptions.map((opt, i) => (
+                        <option key={i} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+
+                    {isCustomAudience && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-2">
+                        <input
+                          required
+                          type="text"
+                          placeholder="Type custom target audience (e.g. B2B Drone Pilots)..."
+                          className="pv-field text-sm bg-surface-2/60 border-accent/40"
+                          value={customAudience}
+                          onChange={e => {
+                            setCustomAudience(e.target.value);
+                            setFormData({ ...formData, audience: e.target.value });
+                          }}
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Industry / Category Dropdown */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">
+                      Industry / Startup Category
+                    </label>
+                    <select
+                      className="pv-field text-sm"
                       value={formData.industry}
                       onChange={e => setFormData({...formData, industry: e.target.value})}
                     >
-                      <option value="SaaS">SaaS</option>
-                      <option value="FinTech">FinTech</option>
-                      <option value="EdTech">EdTech</option>
-                      <option value="Fitness">Fitness</option>
-                      <option value="E-commerce">E-commerce</option>
-                      <option value="Healthcare">Healthcare</option>
+                      {industryOptions.map((ind, i) => (
+                        <option key={i} value={ind}>{ind}</option>
+                      ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Grid Row 2: Business Model, Team Scale, Target Region */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Monetization / Revenue Model */}
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">Team Size</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. 2"
-                      className="pv-field"
+                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">
+                      Business Model
+                    </label>
+                    <select
+                      className="pv-field text-sm"
+                      value={formData.revenueModel}
+                      onChange={e => setFormData({...formData, revenueModel: e.target.value})}
+                    >
+                      {revenueModelOptions.map((rev, i) => (
+                        <option key={i} value={rev}>{rev}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Team Scale */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">
+                      Team Scale / Size
+                    </label>
+                    <select
+                      className="pv-field text-sm"
                       value={formData.teamSize}
                       onChange={e => setFormData({...formData, teamSize: e.target.value})}
-                    />
+                    >
+                      {teamSizeOptions.map((team, i) => (
+                        <option key={i} value={team}>{team}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Target Market / Region */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase text-text-secondary tracking-widest">
+                      Target Region / Market
+                    </label>
+                    <select
+                      className="pv-field text-sm"
+                      value={formData.country}
+                      onChange={e => setFormData({...formData, country: e.target.value})}
+                    >
+                      {countryOptions.map((ctry, i) => (
+                        <option key={i} value={ctry}>{ctry}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
                 <div className="pt-4">
                   <button
                     type="submit"
-                    className="pv-btn-primary w-full justify-center text-lg shadow-lg shadow-accent/20"
+                    className="pv-btn-primary w-full justify-center text-lg shadow-lg shadow-accent/20 py-3.5"
                   >
                     Start Forensic Risk Scan
                     <ArrowRight className="w-5 h-5 ml-2" />
