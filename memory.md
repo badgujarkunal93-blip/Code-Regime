@@ -486,6 +486,13 @@ cd backend && npm install
 - **Files:** `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `frontend/src/pages/ConfessionWall.jsx`, `memory.md`.
 - **Verification:** Verified live in Chrome DevTools on `http://localhost:5173/confessions`. Clicked demo pills, submitted new confessions, and tested upvotes — updates render instantly in real time. Build clean (0 errors).
 
+### Session 8 — 2026-08-07 — Sidebar Featured Vaults '+' Button Modal (model: Gemini 3.6 Flash)
+- **Built Add Featured Vault Modal**: Wired `+` icon next to `FEATURED VAULTS` in `Sidebar.jsx` to open an interactive modal. Users can search and pin postmortems (e.g. *Kite AI, Fast Checkout, Byju's, Parse, Webvan, Juicero, Solyndra*) directly to their sidebar.
+- **Added Unpin & Persistence**: Added hover `X` button on pinned sidebar vaults to unpin items. Vault list persists in `localStorage`.
+- **Files:** `frontend/src/components/Sidebar.jsx`, `memory.md`.
+- **Verification:** Verified live in Chrome DevTools. Clicked `+` button, searched postmortems, clicked `Pin` on Kite AI — Kite was instantly added to sidebar featured vaults and persisted. Build clean (0 errors).
+
+
 
 
 ### Session 4 — 2026-06-28 — Bug sweep + auth-fallback fix (model: claude-opus-4-8)

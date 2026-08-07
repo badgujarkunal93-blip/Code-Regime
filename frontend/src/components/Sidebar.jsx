@@ -221,11 +221,49 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
   ];
 
   // Featured / Recent Founder Case Studies
-  const featuredFounders = [
-    { name: 'Quibi Postmortem', slug: 'quibi', avatar: 'Q', status: 'bg-danger' },
-    { name: 'Theranos Autopsy', slug: 'theranos', avatar: 'T', status: 'bg-warning' },
-    { name: 'WeWork Collapse', slug: 'wework', avatar: 'W', status: 'bg-success' },
+  const defaultVaults = [
+    { name: 'Quibi Postmortem', slug: 'quibi', avatar: 'Q', status: 'bg-danger', industry: 'Media / Streaming' },
+    { name: 'Theranos Autopsy', slug: 'theranos', avatar: 'T', status: 'bg-warning', industry: 'HealthTech' },
+    { name: 'WeWork Collapse', slug: 'wework', avatar: 'W', status: 'bg-success', industry: 'Real Estate / Coworking' },
   ];
+
+  const availableVaults = [
+    { name: 'Quibi Postmortem', slug: 'quibi', avatar: 'Q', status: 'bg-danger', industry: 'Media / Streaming' },
+    { name: 'Theranos Autopsy', slug: 'theranos', avatar: 'T', status: 'bg-warning', industry: 'HealthTech' },
+    { name: 'WeWork Collapse', slug: 'wework', avatar: 'W', status: 'bg-success', industry: 'Real Estate / Coworking' },
+    { name: 'Kite AI Dev Tools', slug: 'kite', avatar: 'K', status: 'bg-danger', industry: 'AI Dev Tools' },
+    { name: 'Fast Checkout Crash', slug: 'fast', avatar: 'F', status: 'bg-danger', industry: 'FinTech / Payments' },
+    { name: 'Byju\'s EdTech Deficit', slug: 'byjus', avatar: 'B', status: 'bg-warning', industry: 'EdTech' },
+    { name: 'Parse Infrastructure', slug: 'parse', avatar: 'P', status: 'bg-success', industry: 'B2B SaaS / Infra' },
+    { name: 'Webvan Dot-Com', slug: 'webvan', avatar: 'W', status: 'bg-danger', industry: 'E-Commerce Delivery' },
+    { name: 'Juicero Connected Press', slug: 'juicero', avatar: 'J', status: 'bg-warning', industry: 'Consumer Hardware' },
+    { name: 'Solyndra Solar Energy', slug: 'solyndra', avatar: 'S', status: 'bg-warning', industry: 'CleanTech' }
+  ];
+
+  const [vaults, setVaults] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pivotvault_featured_vaults');
+      return saved ? JSON.parse(saved) : defaultVaults;
+    } catch {
+      return defaultVaults;
+    }
+  });
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [vaultSearch, setVaultSearch] = useState('');
+
+  const addVault = (v) => {
+    if (vaults.some(item => item.slug === v.slug)) return;
+    const updated = [...vaults, v];
+    setVaults(updated);
+    try { localStorage.setItem('pivotvault_featured_vaults', JSON.stringify(updated)); } catch {}
+  };
+
+  const removeVault = (slug) => {
+    const updated = vaults.filter(item => item.slug !== slug);
+    setVaults(updated);
+    try { localStorage.setItem('pivotvault_featured_vaults', JSON.stringify(updated)); } catch {}
+  };
 
   const userInitials = (user?.name || 'Andrew Smith')
     .split(/\s+/)
@@ -331,30 +369,54 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           {!collapsed && (
             <div className="flex items-center justify-between px-2 mb-2">
               <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-60">FEATURED VAULTS</span>
-              <Plus className="w-3.5 h-3.5 text-text-muted cursor-pointer hover:text-text-primary" />
+              <button
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                aria-label="Add Featured Vault"
+                className="p-1 rounded-md text-text-muted hover:text-accent hover:bg-accent/10 transition-colors group/btn"
+                title="Add Featured Vault to Sidebar"
+              >
+                <Plus className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" />
+              </button>
             </div>
           )}
           <div className="space-y-1.5">
-            {featuredFounders.map((f) => (
-              <Link
-                key={f.slug}
-                to={`/startup/${f.slug}`}
-                onClick={() => setIsMobileOpen(false)}
-                className={clsx(
-                  "flex items-center gap-3 p-2 rounded-xl transition-all hover:bg-surface-2/80 group",
-                  collapsed ? "justify-center" : ""
-                )}
-              >
-                <div className="relative shrink-0 w-8 h-8 rounded-full bg-surface-2 border border-border text-accent font-bold text-xs flex items-center justify-center group-hover:scale-105 transition-transform">
-                  {f.avatar}
-                  <span className={clsx("absolute bottom-0 right-0 w-2 h-2 rounded-full border border-bg", f.status)} />
-                </div>
+            {vaults.map((f) => (
+              <div key={f.slug} className="relative group/vault">
+                <Link
+                  to={`/startup/${f.slug}`}
+                  onClick={() => setIsMobileOpen(false)}
+                  className={clsx(
+                    "flex items-center gap-3 p-2 rounded-xl transition-all hover:bg-surface-2/80 group",
+                    collapsed ? "justify-center" : ""
+                  )}
+                >
+                  <div className="relative shrink-0 w-8 h-8 rounded-full bg-surface-2 border border-border text-accent font-bold text-xs flex items-center justify-center group-hover:scale-105 transition-transform">
+                    {f.avatar}
+                    <span className={clsx("absolute bottom-0 right-0 w-2 h-2 rounded-full border border-bg", f.status || 'bg-accent')} />
+                  </div>
+                  {!collapsed && (
+                    <span className="text-xs font-medium text-text-secondary group-hover:text-text-primary truncate flex-1 pr-6">
+                      {f.name}
+                    </span>
+                  )}
+                </Link>
                 {!collapsed && (
-                  <span className="text-xs font-medium text-text-secondary group-hover:text-text-primary truncate">
-                    {f.name}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      removeVault(f.slug);
+                    }}
+                    aria-label={`Remove ${f.name} from featured vaults`}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/vault:opacity-100 p-1 text-text-muted hover:text-danger hover:bg-danger/10 rounded-md transition-all"
+                    title="Unpin from Sidebar"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 )}
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -427,6 +489,105 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
               </div>
             </motion.aside>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* ADD FEATURED VAULT MODAL */}
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowAddModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="pv-card w-full max-w-md p-6 bg-surface border-accent/30 shadow-2xl space-y-5"
+            >
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-accent" />
+                  <h3 className="font-display font-bold text-lg text-text-primary">Add Featured Vault</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="text-text-muted hover:text-text-primary p-1 rounded-lg hover:bg-surface-2"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-xs text-text-secondary">
+                  Pin startup postmortems to your sidebar for instant 1-click access during analysis.
+                </p>
+
+                <div className="relative">
+                  <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search startup postmortem (e.g. Fast, Kite, Solyndra...)"
+                    className="pv-field pl-9 text-xs"
+                    value={vaultSearch}
+                    onChange={(e) => setVaultSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Available Vaults List */}
+              <div className="max-h-64 overflow-y-auto space-y-2 pr-1 scrollbar-thin scrollbar-thumb-accent/20">
+                {availableVaults
+                  .filter(v => 
+                    v.name.toLowerCase().includes(vaultSearch.toLowerCase()) || 
+                    v.slug.toLowerCase().includes(vaultSearch.toLowerCase()) ||
+                    v.industry.toLowerCase().includes(vaultSearch.toLowerCase())
+                  )
+                  .map((v) => {
+                    const isAlreadyPinned = vaults.some(existing => existing.slug === v.slug);
+                    return (
+                      <div
+                        key={v.slug}
+                        className="flex items-center justify-between p-3 rounded-xl border border-border/60 bg-surface-2/40 hover:border-accent/40 transition-all"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-surface border border-border text-accent font-bold text-xs flex items-center justify-center shrink-0">
+                            {v.avatar}
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-text-primary">{v.name}</div>
+                            <div className="text-[10px] text-text-muted">{v.industry}</div>
+                          </div>
+                        </div>
+
+                        {isAlreadyPinned ? (
+                          <button
+                            type="button"
+                            onClick={() => removeVault(v.slug)}
+                            className="text-xs px-2.5 py-1 rounded-lg bg-danger/10 text-danger border border-danger/20 font-bold hover:bg-danger hover:text-white transition-all shrink-0"
+                          >
+                            Unpin
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => addVault(v)}
+                            className="text-xs px-2.5 py-1 rounded-lg bg-accent/10 text-accent border border-accent/20 font-bold hover:bg-accent hover:text-accent-contrast transition-all flex items-center gap-1 shrink-0"
+                          >
+                            <Plus className="w-3 h-3" /> Pin
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
