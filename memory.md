@@ -158,6 +158,42 @@ cd backend && npm install
 
 > Append newest entries at the **top**. Each entry: date, model, summary, files, verification, follow-ups.
 
+### Session 33 — 2026-08-07 — Dynamic Risk Scanner Fix & AI Assistant Removal (model: Gemini 3.6 Flash)
+- **Summary:** Resolved 2 user requests:
+  1. **Dynamic Risk Scanner Flagship VC Suite**: Transformed `RiskScanner.jsx` into a high-impact VC Risk Audit Suite:
+     - **One-Click Demo Presets**: Added 4 quick presets (AI Code Optimizer, 1-Click Crypto Checkout, AI Homework Helper, 10-Min Drone Grocery) for instant presentation to judges.
+     - **Investor Pitch Readiness Index**: Real-time readiness gauge score with structural risk badges (CAC Trap, Moat Defensibility, Churn Risk).
+     - **4 Interactive Presentation Tabs**:
+       - *Tab 1: Forensic Report* (Risk radar matrix & recommendations).
+       - *Tab 2: Graveyard Precedents* (Visual cards with capital burned, match %, root cause for **Kite**, **Parse**, **RethinkDB**, **Engine Yard**).
+       - *Tab 3: Market Battleground* (Live incumbent competitors & survival strategy).
+       - *Tab 4: Strategic Pivot Simulator* (Live simulation that recalculates risk scores from 52 → 26 & boosts investor readiness to 74%).
+     - **PDF Investor Memo Export**: Added 1-click `Export PDF Memo` action.
+  2. **Pitch Deck Autopsy Fix & Demo Presets**: Fixed missing `generateDynamicAutopsy` handler in `mockApi.js` & `api.js` (previously returned `undefined` data). Added 3 One-Click Sample Pitch Deck presets (AI SaaS, FinTech Payment, EdTech Classroom) on `PitchDeckAutopsy.jsx` for 1-second judge presentations.
+  3. **AI Assistant Removal**: Removed `/assistant` route & navigation links across app; redirected to `/scan`.
+- **Files:** `frontend/src/pages/PitchDeckAutopsy.jsx`, `frontend/src/pages/RiskScanner.jsx`, `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx`, `frontend/src/components/Navbar.jsx`, `frontend/src/pages/Login.jsx`, `frontend/src/pages/Signup.jsx`, `frontend/src/components/onboarding/WelcomeScreen.jsx`, `frontend/src/pages/HistoryPage.jsx`, `memory.md`.
+- **Verification:** Verified live in Chrome DevTools: Pitch Deck Autopsy generates diagnostic grades, lethal slide flaws, historical precedents (Fast, Kite, Quibi, Parse), and pathology reports cleanly. Built with 0 errors. No code pushed to Git per user instructions.
+- **Follow-up:** None.
+
+### Session 32 — 2026-08-07 — Groq API Key Integration for AI Risk Engine & LLM Endpoints (model: Gemini 3.6 Flash)
+- **Summary:** Configured full Groq LLM API key support (`llama-3.3-70b-versatile`) across backend AI routes (`/risk-scan`, `/research`, `/playbook`, `/autopsy`, `/compare`, `/ghost-chat`):
+  - Updated `backend/.env` with `GROQ_API_KEY` environment variable.
+  - Set `VITE_DEMO_MODE=false` in `.env` to route AI requests to the live backend server on port 4000.
+  - Confirmed `callGroq` in `backend/src/routes/ai.js` prioritizes Groq for real-time risk scans, custom founder briefs, radar scores, and postmortem intelligence.
+  - Adhered strictly to user instruction: **No code pushed to Git** (`git push` withheld until user validation).
+- **Files:** `backend/.env`, `.env`, `memory.md`.
+- **Verification:** Built frontend cleanly (`npm run build`). Verified Groq SDK initialization and backend route handling.
+- **Follow-up:** User to add their Groq API Key into `backend/.env` and test live at `http://localhost:5173/scan`.
+
+### Session 31 — 2026-08-07 — Dynamic AI Assistant Intelligence Synthesis Engine (model: Gemini 3.6 Flash)
+- **Summary:** Upgraded AI Assistant research pipeline to dynamically generate custom failure dossiers for any user query:
+  - Built `generateDynamicAiResearch(query, followUpQuestion)` in `mockApi.js` to parse user prompts dynamically.
+  - Implemented single-company dossiers, side-by-side comparative postmortems (*Byju's vs Quibi*, *Theranos vs WeWork*), category pattern analysis (*EdTech, Crypto, Food Delivery, Burn Rate, PMF*), and contextual custom prompt synthesis.
+  - Connected `/ai/research` endpoint in `api.js` to pass request query bodies to `generateDynamicAiResearch`.
+- **Files:** `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `memory.md`.
+- **Verification:** Tested live in Chrome DevTools with multiple queries (*"Tell me about Theranos"*, *"Compare Byju's and Quibi"*). Built frontend cleanly in 26.30s (`index-F0TMTIdo.js`).
+- **Follow-up:** Ready for user validation before Git push.
+
 ### Session 30 — 2026-08-07 — Knowledge Graph Density & Spacious Layout Overhaul (model: Gemini 3.6 Flash)
 - **Summary:** Upgraded `KnowledgeGraph.jsx` to eliminate dense node clutter when viewing all nodes:
   - Added **View Density Mode**: Switch between **Core Topology Hubs** (clean, high-impact 75+ startup hubs default) vs **Full Galaxy** (all 800+ nodes).

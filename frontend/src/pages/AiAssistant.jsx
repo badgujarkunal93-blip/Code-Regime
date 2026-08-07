@@ -27,6 +27,7 @@ const AiAssistant = () => {
     setLoading(true);
     if (!isFollowUp) {
       setOriginalQuery(searchQuery);
+      setConversation([]);
       showLoader('Researching startup intelligence...');
     }
     setError(null);
@@ -64,27 +65,30 @@ const AiAssistant = () => {
   };
 
   React.useEffect(() => {
-    if (urlQuery && conversation.length === 0) {
+    if (urlQuery) {
       setQuery(urlQuery);
-      executeResearch(urlQuery);
+      setConversation([]);
+      executeResearch(urlQuery, false);
     }
   }, [urlQuery]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!query.trim()) return;
+    setConversation([]);
     setSearchParams({ q: query });
-    executeResearch(query, conversation.length > 0);
+    executeResearch(query, false);
     setQuery('');
   };
 
-  const handleSendFollowUp = () => {
-    executeResearch(query, true);
+  const handleSendFollowUp = (followUpText) => {
+    const textToSend = followUpText || query;
+    if (!textToSend.trim()) return;
+    executeResearch(textToSend, true);
     setQuery('');
   };
 
   const handleSuggestedFollowUp = (followUpQuery) => {
-    setQuery(followUpQuery);
     executeResearch(followUpQuery, true);
   };
 
@@ -168,9 +172,11 @@ const AiAssistant = () => {
                   <button
                     key={idx}
                     onClick={() => {
-                      setQuery(q);
+                      setConversation([]);
+                      setOriginalQuery(q);
+                      setQuery('');
                       setSearchParams({ q });
-                      executeResearch(q);
+                      executeResearch(q, false);
                     }}
                     className="text-left p-5 pv-card-interactive"
                   >

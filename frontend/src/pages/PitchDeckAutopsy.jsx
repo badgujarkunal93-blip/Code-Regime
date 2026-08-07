@@ -132,6 +132,29 @@ const PitchDeckAutopsy = () => {
     { label: "Compare with successful startups", prompt: "Compare my pitch deck against successful startups in this industry and explain what they did differently." }
   ];
 
+  const sampleDecks = [
+    {
+      label: '🚀 Sample 1: AI SaaS Pitch Deck',
+      industry: 'SaaS',
+      content: `PROBLEM: Engineering teams spend 40% of their bandwidth writing manual documentation and refactoring legacy code.\nSOLUTION: An AI assistant that scans repositories and auto-generates documentation and code optimization.\nMARKET SIZE (TAM): $45 Billion global software developer tools market.\nMONETIZATION: $29 per user per month SaaS subscription.\nCOMPETITION: GitHub Copilot, SonarQube, Tabnine.\nGO-TO-MARKET: Organic developer word of mouth and Google search ads.`
+    },
+    {
+      label: '💳 Sample 2: FinTech Payment Pitch Deck',
+      industry: 'FinTech',
+      content: `PROBLEM: E-commerce merchants lose 3% of revenue to credit card processing fees and 5% to cart abandonment.\nSOLUTION: Sub-second 1-click crypto payment gateway for Shopify with zero merchant gas fees.\nMARKET SIZE (TAM): $10 Trillion global retail e-commerce payments.\nMONETIZATION: 0.5% merchant payout fee per transaction.\nCOMPETITION: Fast, Bolt, Stripe Checkout.\nGO-TO-MARKET: Direct Instagram & Meta ad campaigns targeting e-commerce store owners.`
+    },
+    {
+      label: '🎓 Sample 3: EdTech Classroom Pitch Deck',
+      industry: 'EdTech',
+      content: `PROBLEM: K-12 school districts struggle with personalized student math & science tutoring.\nSOLUTION: An adaptive AI tutoring platform for public school classrooms.\nMARKET SIZE (TAM): $80 Billion US Public School Education Budget.\nMONETIZATION: $10,000 per school district annual licensing contract.\nCOMPETITION: Khan Academy, Byju's, Knewton.\nGO-TO-MARKET: Direct enterprise sales reps pitching school district superintendents.`
+    }
+  ];
+
+  const applySampleDeck = (sample) => {
+    setDeckContent(sample.content);
+    setIndustry(sample.industry);
+  };
+
   return (
     <div className="pv-content-container py-12">
       <WorkspaceBar />
@@ -162,6 +185,25 @@ const PitchDeckAutopsy = () => {
             animate={{ opacity: 1, y: 0 }}
             className="pv-card p-10"
           >
+            {/* Demo Sample Deck Presets */}
+            <div className="mb-8 p-4 rounded-xl border border-accent/20 bg-surface-2/40">
+              <div className="text-xs font-bold uppercase tracking-widest text-text-muted mb-3 flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-accent" /> One-Click Sample Pitch Decks for Judges
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sampleDecks.map((sample, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => applySampleDeck(sample)}
+                    className="text-xs px-3.5 py-2 rounded-lg border border-border bg-surface hover:border-accent/50 hover:bg-accent/10 transition-all font-medium text-text-primary flex items-center gap-1.5"
+                  >
+                    {sample.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <form onSubmit={handleAutopsy} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">

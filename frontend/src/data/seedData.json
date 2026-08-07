@@ -1,5 +1,38 @@
 [
   {
+    "name": "Byju's",
+    "slug": "byjus",
+    "industry": "EdTech",
+    "country": "India",
+    "city": "Bengaluru",
+    "yearFounded": 2011,
+    "yearClosed": 2024,
+    "founders": [
+      "Byju Raveendran",
+      "Divya Gokulnath"
+    ],
+    "funding": "$5.8B",
+    "investors": [
+      "Sequoia Capital India",
+      "Tiger Global",
+      "General Atlantic",
+      "Tencent",
+      "Chan Zuckerberg Initiative"
+    ],
+    "employees": "~50,000 at peak",
+    "businessModel": "K-12 learning app, exam prep & acquired offline tutoring centers",
+    "targetCustomers": "Students, parents, exam aspirants",
+    "productDescription": "Edtech learning platform offering video lessons, personalized learning programs, and test prep courses.",
+    "failureReasons": [
+      "Aggressive debt-fueled acquisitions (WhiteHat Jr, Aakash)",
+      "Misleading sales practices and accounting irregularities",
+      "Default on $1.2B Term Loan B and insolvency proceedings"
+    ],
+    "failureCategory": "Debt / Over-expansion / Governance",
+    "timeline": "Founded 2011; Valued at $22B in 2022; Auditor Deloitte resigns 2023; Term Loan B default 2023; Insolvency proceedings 2024",
+    "summary": "India's highest-valued edtech unicorn ($22B peak) collapsed after debt-funded aggressive acquisitions, accounting delays, auditor resignations, and default on a $1.2 billion international loan."
+  },
+  {
     "name": "Theranos",
     "industry": "HealthTech",
     "country": "USA",

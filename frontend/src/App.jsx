@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -33,7 +33,6 @@ const RiskScanner = lazy(() => import('./pages/RiskScanner'));
 const KnowledgeGraph = lazy(() => import('./pages/KnowledgeGraph'));
 const ConfessionWall = lazy(() => import('./pages/ConfessionWall'));
 const InsightsDashboard = lazy(() => import('./pages/InsightsDashboard'));
-const AiAssistant = lazy(() => import('./pages/AiAssistant'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const BookmarksPage = lazy(() => import('./pages/BookmarksPage'));
@@ -188,7 +187,7 @@ function AppContent() {
                     <Route path="/graph" element={<KnowledgeGraph />} />
                     <Route path="/confessions" element={<ConfessionWall />} />
                     <Route path="/insights" element={<InsightsDashboard />} />
-                    <Route path="/assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
+                    <Route path="/assistant" element={<Navigate to="/scan" replace />} />
                     <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
                     <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
                     <Route path="/playbook" element={<ProtectedRoute><FounderPlaybook /></ProtectedRoute>} />

@@ -53,7 +53,6 @@ const Navbar = () => {
 
   const primaryNav = [
     { name: 'Explore', path: '/explore', icon: Search },
-    { name: 'AI Assistant', path: '/assistant', icon: Sparkles },
     { name: 'Risk Scanner', path: '/scan', icon: Zap },
     { name: 'Playbook', path: '/playbook', icon: ClipboardCheck },
   ];

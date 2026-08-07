@@ -119,9 +119,9 @@ const WelcomeScreen = ({ onTakeTour, onSkipTour, onSignIn }) => {
             <Search className="w-4 h-4" />
             Explore Archive
           </button>
-          <button type="button" onClick={() => navigate('/assistant')} className="pv-btn-secondary w-full justify-center">
-            <Sparkles className="w-4 h-4" />
-            AI Analysis
+          <button type="button" onClick={() => navigate('/scan')} className="pv-btn-secondary w-full justify-center">
+            <Zap className="w-4 h-4" />
+            Risk Scanner
           </button>
           <button type="button" onClick={onTakeTour} className="pv-btn-primary w-full justify-center">
             <Play className="w-4 h-4" />

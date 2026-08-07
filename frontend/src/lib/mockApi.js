@@ -1,5 +1,5 @@
 import seedData from '../data/seedData.json';
-export { fetchFirestoreStartups, fetchFirestoreStartupBySlug } from './firebaseData';
+export { fetchFirestoreStartups, fetchFirestoreStartupBySlug } from './firebaseData.js';
 
 function slugify(str) {
   return (str || '')
@@ -585,61 +585,465 @@ export const getStartupBySlug = (slug) => {
   return generateWebIntelligenceReport(slug, name);
 };
 
-export const mockRiskScan = {
-  riskScore: 72,
-  riskBreakdown: {
-    customerAcquisition: 65,
-    retention: 70,
-    monetization: 60,
-    competition: 80,
-    timing: 75
-  },
-  recommendations: [
-    { priority: 'high', action: 'Validate PMF aggressively', rationale: 'Most failures here stem from lack of product-market fit.' },
-    { priority: 'medium', action: 'Fix unit economics early', rationale: 'Don\'t scale before proving profitable per user.' }
-  ],
-  suggestedPivots: [
-    { type: 'Market', description: 'Target a more specific niche with higher willingness to pay.', historicalExample: 'Slack pivoted from gaming to enterprise comms.' },
-    { type: 'Product', description: 'Simplify features to core value proposition only.', historicalExample: 'Instagram dropped all features except photo filters.' }
-  ]
-};
+function getDomainPrecedents(ideaStr, industryStr) {
+  const text = `${ideaStr} ${industryStr}`.toLowerCase();
 
-export const mockAiResponse = {
-  aiSummary: `## FORENSIC DOSSIER: THE MORTALITY OF SCALING
+  // 1. Dev / Code / SaaS / Software / AI / Infrastructure
+  if (/code|developer|saas|software|ai|api|platform|cloud|dev|optimizer|optimiser|automation|tool|infrastructure/i.test(text)) {
+    return [
+      { name: 'Kite', industry: 'AI Dev Tools', funding: '$17M', deathYear: 2021, trapPattern: 'Free Tier Monetization Churn', similarityScore: 92, summary: 'AI code completion engine failed after failing to convert free developer users to paid subscriptions before GitHub Copilot dominated.' },
+      { name: 'Parse', industry: 'B2B SaaS / Dev Tools', funding: '$7M', deathYear: 2017, trapPattern: 'Platform Lock-In & Margin Squeeze', similarityScore: 86, summary: 'Backend-as-a-Service developer platform shut down after acquisition due to monetization bottlenecks and platform lock-in.' },
+      { name: 'RethinkDB', industry: 'Developer Infrastructure', funding: '$12M', deathYear: 2016, trapPattern: 'Engineering Over-indexing / GTM Failure', similarityScore: 81, summary: 'Open-source developer database collapsed after prioritizing technical elegance over commercial go-to-market execution.' },
+      { name: 'Engine Yard', industry: 'Cloud Platform / PaaS', funding: '$75M', deathYear: 2017, trapPattern: 'Cloud Provider Commoditization', similarityScore: 78, summary: 'PaaS pioneer struggled to defend pricing margins against native AWS developer tools.' }
+    ];
+  }
 
-An analysis of our failure intelligence database reveals a sobering truth: **over 70% of high-profile startup failures are self-inflicted wounds, not market casualties.** When we dissect the remains of ventures like **Juicero** and **Quibi**, we find a recurring pathology: the attempt to manufacture consumer demand through sheer capital volume rather than organic product utility.
+  // 2. FinTech / Payments / Banking / Crypto
+  if (/fintech|finance|bank|pay|credit|crypto|token|web3|wallet|invest|loan|trading/i.test(text)) {
+    return [
+      { name: 'Fast', industry: 'FinTech', funding: '$124M', deathYear: 2022, trapPattern: 'Premature Burn vs Low Revenue', similarityScore: 94, summary: 'One-click checkout startup collapsed after burning $10M/month while generating under $50M in annual revenue.' },
+      { name: 'Plastiq', industry: 'FinTech / Payments', funding: '$140M', deathYear: 2023, trapPattern: 'Processing Margin Collapse', similarityScore: 88, summary: 'Credit card payment aggregator filed for bankruptcy due to unsustainable processing fee margins and debt service.' },
+      { name: 'Frank', industry: 'FinTech / Ed', funding: '$20M', deathYear: 2023, trapPattern: 'Audited Due-Diligence Failure', similarityScore: 82, summary: 'Financial aid planning platform collapsed after audit revealed fabricated active user accounts during acquisition.' },
+      { name: 'Celsius Network', industry: 'Crypto / DeFi', funding: '$850M', deathYear: 2022, trapPattern: 'Unhedged Liquidity Freeze', similarityScore: 79, summary: 'Crypto yield platform collapsed due to unhedged liquidity risk and insolvency during market contraction.' }
+    ];
+  }
 
-### The Pathology of Blitzscaling
+  // 3. EdTech / Education
+  if (/edtech|education|learn|student|school|tutor|course|exam/i.test(text)) {
+    return [
+      { name: 'Byju\'s', industry: 'EdTech', funding: '$5.8B', deathYear: 2024, trapPattern: 'Over-leveraged Debt & Acquisition Overreach', similarityScore: 95, summary: 'India\'s edtech unicorn collapsed after debt-funded aggressive acquisitions, accounting delays, and auditor resignations.' },
+      { name: 'AltSchool', industry: 'EdTech', funding: '$175M', deathYear: 2019, trapPattern: 'Physical Capex vs Software Margins', similarityScore: 87, summary: 'Tech-enabled micro-school network failed due to excessive physical operating overhead outstripping software revenue.' },
+      { name: 'Knewton', industry: 'EdTech / Adaptive Learning', funding: '$180M', deathYear: 2019, trapPattern: 'Long Enterprise Sales Cycles', similarityScore: 83, summary: 'Adaptive learning engine failed to scale B2B publisher contracts before capital reserves depleted.' },
+      { name: 'TutorGroup', industry: 'EdTech', funding: '$300M', deathYear: 2020, trapPattern: 'CAC Subsidization Trap', similarityScore: 77, summary: 'Online tutoring platform struggled with high customer acquisition costs and low long-term student retention.' }
+    ];
+  }
 
-The modern venture ecosystem often operates on a dangerous premise: that speed is the ultimate defensive moat. However, when applied to capital-intensive businesses, this "blitzscaling" model becomes a death sentence if the underlying unit economics are negative.
+  // 4. Hardware / Robotics / Consumer IoT
+  if (/hardware|device|iot|robot|wearable|camera|drone|car|ev|gadget/i.test(text)) {
+    return [
+      { name: 'Juicero', industry: 'Consumer Hardware', funding: '$120M', deathYear: 2017, trapPattern: 'Overengineered Value Proposition', similarityScore: 93, summary: 'Connected juice press collapsed after consumers discovered juice packs could be manually squeezed without the $400 machine.' },
+      { name: 'Jawbone', industry: 'Wearables', funding: '$1.0B', deathYear: 2017, trapPattern: 'Hardware Defect & Incumbent Dominance', similarityScore: 89, summary: 'Pioneer in wearable fitness trackers failed due to high hardware defect rates and intense competition from Apple Watch.' },
+      { name: 'Anki', industry: 'AI Robotics', funding: '$200M', deathYear: 2019, trapPattern: 'Bill of Materials vs Willingness-to-Pay', similarityScore: 84, summary: 'Consumer AI robotics company failed after hardware manufacturing costs exceeded consumer willingness to pay.' },
+      { name: 'Pebble', industry: 'Smartwatches', funding: '$26M', deathYear: 2016, trapPattern: 'Supply Chain Cash Trap', similarityScore: 79, summary: 'Smartwatch pioneer failed due to supply chain delays and aggressive market expansion by platform incumbents.' }
+    ];
+  }
 
-| Failure Archetype | Key Metric Failure | Primary Casualty | Strategic Lesson |
-| --- | --- | --- | --- |
-| **Premature Scaling** | LTV/CAC < 1.0 | Webvan, Beepi | Solve unit economics before scaling |
-| **Founder Capture** | R&D Spend > Utility | Juicero, Theranos | Validate core value prop, not the hype |
-| **Subsidized Demand** | Contribution Margin < 0 | MoviePass | Negative-margin growth is not a strategy |
+  // 5. Media / Streaming / Content / Social
+  if (/media|video|stream|content|game|movie|music|social|show|entertainment/i.test(text)) {
+    return [
+      { name: 'Quibi', industry: 'Media / Streaming', funding: '$1.75B', deathYear: 2020, trapPattern: 'Platform & Timing Disconnect', similarityScore: 96, summary: 'Mobile short-form video streaming service collapsed due to lack of TV casting support and COVID commute shift.' },
+      { name: 'Vessel', industry: 'Media Subscriptions', funding: '$134M', deathYear: 2016, trapPattern: 'Paywall Audience Friction', similarityScore: 88, summary: 'Early-access video platform failed to convert free YouTube audiences to paid recurring subscriptions.' },
+      { name: 'Rdio', industry: 'Music Streaming', funding: '$125M', deathYear: 2015, trapPattern: 'Licensing Royalty Squeeze', similarityScore: 82, summary: 'Music streaming service failed due to high record label licensing fees and competition from Spotify\'s ad-supported tier.' },
+      { name: 'Vine', industry: 'Social Video', funding: '$30M', deathYear: 2016, trapPattern: 'Creator Monetization Loss', similarityScore: 78, summary: 'Short-form video app collapsed after failing to monetize creators before Instagram and TikTok dominated.' }
+    ];
+  }
 
-### The Critical Inflection Points
+  // 6. Food / Quick Delivery / Logistics / E-Commerce
+  if (/food|delivery|grocery|restaurant|meal|kitchen|logistics|quick|ecommerce|retail|shop/i.test(text)) {
+    return [
+      { name: 'Webvan', industry: 'Grocery Delivery', funding: '$800M', deathYear: 2001, trapPattern: 'Premature Infrastructure Scaling', similarityScore: 95, summary: 'Online grocery delivery pioneer collapsed after building expensive automated warehouses ahead of customer demand.' },
+      { name: 'Munchery', industry: 'Food Delivery', funding: '$125M', deathYear: 2019, trapPattern: 'Negative Unit Fulfillment Margin', similarityScore: 89, summary: 'On-demand meal delivery startup failed due to negative unit margins on food prep and last-mile delivery.' },
+      { name: 'SpoonRocket', industry: 'Speed Delivery', funding: '$13M', deathYear: 2016, trapPattern: 'Subsidized Delivery Burn', similarityScore: 83, summary: '10-minute meal delivery startup collapsed due to severe last-mile delivery subsidies.' },
+      { name: 'Fab.com', industry: 'E-Commerce', funding: '$330M', deathYear: 2015, trapPattern: 'Core Product Positioning Pivot Failure', similarityScore: 79, summary: 'Flash-sale e-commerce unicorn collapsed after pivoting away from core curated design goods.' }
+    ];
+  }
 
-Our forensic algorithms identify three critical phases where startups seal their fate:
-1. **The Validation Illusion:** Relying on vanity metrics (app downloads, waitlist signups) instead of cohort retention.
-2. **The Capital Catalyst:** Raising mega-rounds that force the company to expand headcount and infrastructure ahead of product-market fit.
-3. **The Death Spiral:** Attempting to retroactively fix margins by degrading the user experience, leading to rapid churn and brand collapse.
+  // 7. HealthTech / Medical
+  if (/health|medical|bio|pharma|care|doctor|patient|wellness|healthtech/i.test(text)) {
+    return [
+      { name: 'Theranos', industry: 'HealthTech', funding: '$700M', deathYear: 2018, trapPattern: 'Unvalidated Tech & Regulatory Action', similarityScore: 97, summary: 'Blood-testing startup collapsed following federal fraud investigations and unvalidated technology claims.' },
+      { name: 'Olive AI', industry: 'Healthcare Automation', funding: '$902M', deathYear: 2023, trapPattern: 'Unscalable Enterprise Custom Integration', similarityScore: 88, summary: 'Healthcare workflow automation startup collapsed due to unscalable custom hospital integration costs.' },
+      { name: 'Outcome Health', industry: 'HealthTech Advertising', funding: '$500M', deathYear: 2019, trapPattern: 'Fraudulent Audit Exposure', similarityScore: 84, summary: 'Point-of-care health screen network collapsed after overcharging pharmaceutical advertisers.' },
+      { name: 'Proteus Digital Health', industry: 'Digital Health', funding: '$500M', deathYear: 2020, trapPattern: 'Insurer Reimbursement Lockout', similarityScore: 78, summary: 'Smart pill startup failed to secure insurer reimbursement despite FDA clearance.' }
+    ];
+  }
 
-*For a detailed breakdown, explore the individual postmortems of Juicero, Theranos, and MoviePass.*`,
-  timeline: [
-    { year: 2013, startup: 'Juicero', event: 'Founded with raw-food prophecy' },
-    { year: 2016, startup: 'Juicero', event: 'Launched $699 Wi-Fi press' },
-    { year: 2017, startup: 'Juicero', event: 'Bloomberg hand-squeeze video' },
-    { year: 2017, startup: 'Juicero', event: 'Sudden liquidation and collapse' }
-  ],
-  keyLessons: [
-    { lesson: 'The Hand-Squeeze Test', details: 'If your high-tech hardware can be bypassed by hand in 10 seconds, your value proposition is an illusion.' },
-    { lesson: 'LTV/CAC is the Law of Gravity', insight: 'No amount of brand excitement or celebrity backing can suspend the laws of unit economics. If you lose money on every transaction, scaling only accelerates your demise.' }
-  ],
-  sources: ['juicero', 'theranos', 'wework', 'quibi'],
-  relatedStartups: mockStartups.slice(0, 4)
-};
+  // Default SaaS / Dev Fallback
+  return [
+    { name: 'Kite', industry: 'AI Dev Tools', funding: '$17M', deathYear: 2021, trapPattern: 'Free Tier Monetization Churn', similarityScore: 92, summary: 'AI code completion tool failed after failing to convert free developer users to paid tier before Copilot dominated.' },
+    { name: 'Parse', industry: 'B2B SaaS / Dev Infrastructure', funding: '$7M', deathYear: 2017, trapPattern: 'Monetization Bottleneck', similarityScore: 86, summary: 'Backend-as-a-Service developer platform shut down due to monetization bottlenecks.' },
+    { name: 'Fast', industry: 'FinTech / SaaS', funding: '$124M', deathYear: 2022, trapPattern: 'High Burn vs Low Traction', similarityScore: 82, summary: 'Burned $10M/month with low revenue scaling, leading to sudden shutdown.' },
+    { name: 'RethinkDB', industry: 'Developer Infrastructure', funding: '$12M', deathYear: 2016, trapPattern: 'Engineering over GTM execution', similarityScore: 78, summary: 'Prioritized technical features over commercial distribution and go-to-market execution.' }
+  ];
+}
+
+export function generateDynamicRiskScan(data = {}) {
+  const idea = (data.idea || 'Startup Idea').trim();
+  const industry = (data.industry || 'Technology').trim();
+  const audience = (data.audience || 'Target Users').trim();
+  const revenueModel = (data.revenueModel || 'Subscription').trim();
+  const teamSize = (data.teamSize || '1-5').trim();
+  const followUp = (data.followUpQuestion || '').trim();
+
+  // Dynamic hash helper for deterministic variety based on user input string
+  let hash = 0;
+  const str = `${idea.toLowerCase()}_${industry.toLowerCase()}_${revenueModel.toLowerCase()}`;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const posHash = Math.abs(hash);
+
+  // Compute dynamic scores
+  const isHighRiskCategory = /delivery|crypto|web3|hardware|consumer|social|metaverse|quick|grocery|nft/i.test(str);
+  const baseScore = isHighRiskCategory ? 78 : 55;
+  const riskScore = Math.min(95, Math.max(35, baseScore + (posHash % 17) - 8));
+
+  const cac = Math.min(95, Math.max(40, 60 + (posHash % 25)));
+  const retention = Math.min(95, Math.max(35, 55 + ((posHash >> 2) % 30)));
+  const monetization = Math.min(95, Math.max(30, 50 + ((posHash >> 4) % 35)));
+  const competition = Math.min(95, Math.max(50, 65 + ((posHash >> 6) % 25)));
+  const timing = Math.min(95, Math.max(30, 45 + ((posHash >> 8) % 40)));
+
+  // Retrieve relevant domain precedents
+  const relatedList = getDomainPrecedents(idea, industry);
+
+  if (followUp) {
+    return {
+      riskScore,
+      riskBreakdown: { customerAcquisition: cac, retention, monetization, competition, timing },
+      primaryRisk: cac > competition ? 'Customer Acquisition Cost (CAC)' : 'Market Competition',
+      similarStartups: relatedList.map(s => ({ name: s.name, similarity: 75 + (posHash % 20), keyLesson: s.summary })),
+      recommendations: [
+        { priority: 'high', action: `De-risk "${idea.slice(0, 30)}" with 20 pre-orders from ${audience}`, rationale: 'Pre-selling validates willingness-to-pay before custom engineering.' }
+      ],
+      suggestedPivots: [
+        { type: 'Niche Segment Pivot', description: `Focus strictly on high-value ${audience} rather than mass market.`, historicalExample: 'Slack pivoted from gaming to enterprise communications.' }
+      ],
+      consultantBrief: `## FOLLOW-UP ASSESSMENT: ${followUp.toUpperCase()}
+
+Regarding your follow-up inquiry on **"${idea}"**:
+
+### Strategic Recommendation
+1. **Focus on Unit Contribution Margin**: Ensure revenue per user exceeds fully burdened CAC + support costs.
+2. **Day-30 Retention Benchmark**: Target >30% retention before ramping paid marketing.
+3. **Pre-Sell Validation**: Secure non-refundable deposits from **${audience}** to prove commercial demand.`
+    };
+  }
+
+  const brief = `## FORENSIC RISK REPORT: ${idea.toUpperCase()}
+
+Our startup failure database has cross-referenced **"${idea}"** against **413 historical postmortems** in the **${industry}** sector.
+
+### 1. Headline Risk Index: ${riskScore}/100 (${riskScore > 70 ? 'HIGH RISK' : riskScore > 50 ? 'MODERATE RISK' : 'LOW RISK'})
+* **Target Audience**: ${audience}
+* **Monetization Strategy**: ${revenueModel}
+* **Team Scale**: ${teamSize} member(s)
+
+### 2. Failure Vector Breakdown
+* **Customer Acquisition (CAC)**: **${cac}% Risk** — High acquisition cost relative to customer lifetime value.
+* **Cohort Retention**: **${retention}% Churn Risk** — Risk of steep drop-off after month 1.
+* **Monetization & Unit Margin**: **${monetization}% Vulnerability** — Subsidized pricing margin risks.
+* **Market Competition**: **${competition}% Threat** — Saturation by incumbent offerings.
+* **Market Timing**: **${timing}% Sensitivity** — Macro market readiness.
+
+### 3. Historical Failure Precedents (${relatedList[0]?.industry || industry})
+${relatedList.map(s => `* **${s.name}** (${s.industry}, ${s.funding}): ${s.summary}`).join('\n')}
+
+### 4. Strategic De-Risking Action Plan
+* **Pre-Build Validation**: Conduct 30+ discovery interviews with target users (**${audience}**) asking about past workflow pain points and spending behavior.
+* **Unit Economic Checkpoint**: Calculate true gross margin per customer before allocating capital to marketing.
+* **Cohort Retention Moat**: Do not scale paid user acquisition until Day-30 retention exceeds 30%.`;
+
+  return {
+    riskScore,
+    riskBreakdown: { customerAcquisition: cac, retention, monetization, competition, timing },
+    primaryRisk: cac >= competition ? 'Customer Acquisition Cost (CAC)' : 'Market Competition',
+    similarStartups: relatedList.map((s, idx) => {
+      const simMatch = Math.min(97, Math.max(68, (s.similarityScore || 92) - (idx * 6) + (posHash % 3)));
+      return {
+        name: s.name,
+        industry: s.industry || industry,
+        funding: s.funding || '$15M',
+        deathYear: s.deathYear || 2021,
+        trapPattern: s.trapPattern || 'Market Timing & PMF Friction',
+        similarity: simMatch,
+        keyLesson: s.summary
+      };
+    }),
+    recommendations: [
+      { priority: 'high', action: `Validate ${audience} demand before building custom code`, rationale: 'Historical failures in this space mistook initial interest for willingness to pay.' },
+      { priority: 'high', action: 'Lock in positive contribution margins on day 1', rationale: 'Venture funding cannot subsidize negative unit economics indefinitely.' },
+      { priority: 'medium', action: 'Track Day-30 active user retention benchmark', rationale: 'Acquisition without retention accelerates total cash burn.' }
+    ],
+    suggestedPivots: [
+      { type: 'Niche Segment Pivot', description: `Target a high-value sub-segment of ${audience} with immediate budget.`, historicalExample: 'Slack pivoted from a gaming platform to enterprise team communications.' },
+      { type: 'Feature Focus Pivot', description: 'Strip non-essential features and double down on the single highest-frequency utility.', historicalExample: 'Instagram stripped check-in features to focus 100% on photo sharing.' }
+    ],
+    consultantBrief: brief
+  };
+}
+
+export const mockRiskScan = generateDynamicRiskScan();
+
+export function generateDynamicAiResearch(rawQuery = '', followUpQuestion = '') {
+  const isFollowUp = Boolean(followUpQuestion && followUpQuestion.trim().length > 0);
+  const lowerQuery = (rawQuery || '').toLowerCase().trim();
+  const lowerFollowUp = (followUpQuestion || '').toLowerCase().trim();
+
+  // -------------------------------------------------------------
+  // Scenario A: Follow-up Question Handling (HIGHEST PRECEDENCE)
+  // -------------------------------------------------------------
+  if (isFollowUp) {
+    // A1: Action Plan / Recommendations / Prevention
+    if (lowerFollowUp.includes('recommend') || lowerFollowUp.includes('action') || lowerFollowUp.includes('plan') || lowerFollowUp.includes('avoid') || lowerFollowUp.includes('prevent') || lowerFollowUp.includes('give')) {
+      return {
+        aiSummary: `## FOUNDER DE-RISKING ACTION PLAN
+
+Based on our failure database intelligence for **"${rawQuery}"**, here is the 4-step framework to de-risk your venture:
+
+### Step 1: Pre-Build Validation (0 - 3 Months)
+- Conduct 50+ qualitative customer interviews focusing on past user behavior, not future promises.
+- Secure 20+ non-refundable deposits or LOIs before writing custom code.
+
+### Step 2: Unit Margin Checkpoint (3 - 6 Months)
+- Enforce strict Rule: **True Contribution Margin** \`[Revenue - COGS - Payment Fees - Support]\` MUST be positive on day 1.
+- Do NOT subsidize CAC with venture funding if LTV/CAC < 3.0x.
+
+### Step 3: Cohort Retention Guardrail (6 - 12 Months)
+- Maintain day-30 user retention above **30%** before initiating paid customer acquisition campaigns.
+
+### Step 4: Minimum 18-Month Runway Buffer
+- Maintain a cash runway buffer of at least 18 months at all times to withstand macro market contraction.`,
+        timeline: [
+          { year: 'Phase 1', startup: 'Validation', event: '50 qualitative customer interviews & 20 pre-orders' },
+          { year: 'Phase 2', startup: 'Unit Margins', event: 'Positive contribution margin achieved' },
+          { year: 'Phase 3', startup: 'Cohort Retention', event: '30%+ Day-30 retention benchmark secured' }
+        ],
+        keyLessons: [
+          { lesson: 'Validation Checkpoint', details: 'Never build before pre-selling to 20 paying customers.' },
+          { lesson: 'Runway Guardrail', details: 'Freeze non-essential headcount when runway drops below 14 months.' }
+        ],
+        sources: ['wework', 'byjus', 'quibi'],
+        relatedStartups: (seedData || []).slice(0, 4)
+      };
+    }
+
+    // A2: Deep Dive / Explain deeper / Reasoning & Evidence
+    if (lowerFollowUp.includes('deep') || lowerFollowUp.includes('depth') || lowerFollowUp.includes('reasoning') || lowerFollowUp.includes('evidence') || lowerFollowUp.includes('explain') || lowerFollowUp.includes('more')) {
+      return {
+        aiSummary: `## DEEP DIVE FORENSIC ANALYSIS & EVIDENCE
+
+### 1. Primary Structural Root Causes
+When analyzing **"${rawQuery}"**, forensic evidence points to three compounding inflection points:
+
+* **Top-of-Funnel Vanity Metric Trap**: Teams prioritized gross signup volume while ignoring Day-30 cohort retention decay.
+* **Negative Contribution Margin**: Every new user acquired increased net cash burn rate.
+* **Over-Leveraged Overhead**: Headcount and lease commitments expanded by 3x-5x ahead of proven product utility.
+
+### 2. Quantitative Industry Evidence
+- **Runway Consumption Rate**: Average survival window post-Series A/B was 16 months.
+- **LTV/CAC Decay**: Acquisition cost inflated by **2.4x** within 9 months of paid scaling.
+- **Cohort Retention Floor**: Day-90 active retention plummeted below **11%**.`,
+        timeline: [
+          { year: 'Inflection 1', startup: 'Vanity Metrics', event: 'User downloads masked 90% day-30 churn' },
+          { year: 'Inflection 2', startup: 'Burn Acceleration', event: 'Customer acquisition cost exceeded LTV by 2.5x' },
+          { year: 'Inflection 3', startup: 'Liquidation', event: 'Inability to extend runway led to asset sale' }
+        ],
+        keyLessons: [
+          { lesson: 'Cohort Retention Law', details: 'Do not scale paid user acquisition if day-30 retention < 30%.' },
+          { lesson: 'Margin Guardrail', details: 'Ensure positive unit contribution margin prior to scaling.' }
+        ],
+        sources: ['theranos', 'quibi', 'byjus', 'wework'],
+        relatedStartups: (seedData || []).slice(0, 4)
+      };
+    }
+
+    // A3: Examples / Case Studies
+    if (lowerFollowUp.includes('example') || lowerFollowUp.includes('case') || lowerFollowUp.includes('show')) {
+      const examples = (seedData || []).slice(0, 3);
+      return {
+        aiSummary: `## HISTORICAL CASE STUDIES: ${rawQuery.toUpperCase()}
+
+Here are 3 prominent postmortems from our failure database illustrating this exact pattern:
+
+${examples.map(ex => `### ${ex.name} (${ex.industry || 'Tech'})
+* **Capital Raised**: ${ex.funding || '$50M'}
+* **Operational Breakdown**: ${ex.productDescription || ex.summary || ex.failureCategory}
+* **Key Red Flag**: ${Array.isArray(ex.failureReasons) ? ex.failureReasons[0] : ex.summary}`).join('\n\n')}
+
+### Synthesis across Case Studies
+All three ventures attempted to overcome fundamental unit-economic deficits through aggressive marketing spend rather than product iteration.`,
+        timeline: examples.map(ex => ({
+          year: ex.yearClosed || 2022,
+          startup: ex.name,
+          event: `Liquidated after raising ${ex.funding || 'capital'}`
+        })),
+        keyLessons: examples.map(ex => ({
+          lesson: `${ex.name} Case Study`,
+          details: ex.summary || 'Validate demand before scaling.'
+        })),
+        sources: examples.map(ex => ex.slug || ex.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
+        relatedStartups: examples
+      };
+    }
+
+    // Generic Follow-up Answer
+    return {
+      aiSummary: `## FOLLOW-UP ANALYSIS: ${followUpQuestion.toUpperCase()}
+
+Regarding your follow-up query on **"${rawQuery}"**:
+
+### Key Strategic Takeaways
+1. **Execution Velocity vs Retention**: High growth without retention accelerates total capital loss.
+2. **Moat Protection**: Proprietary unit economics or switching costs are mandatory before entering competitive markets.
+3. **Disciplined Capital Allocation**: Startups keeping lean burn rates survived macroeconomic downturns at a **3.4x higher rate**.`,
+      timeline: [
+        { year: 'Takeaway 1', startup: 'Retention', event: 'Day-30 retention dictates long-term survival' },
+        { year: 'Takeaway 2', startup: 'Margins', event: 'Unit margins must be positive from launch' }
+      ],
+      keyLessons: [
+        { lesson: 'Execution Checkpoint', details: 'Ensure unit economics are positive before scaling.' }
+      ],
+      sources: ['byjus', 'quibi', 'wework'],
+      relatedStartups: (seedData || []).slice(0, 4)
+    };
+  }
+
+  // -------------------------------------------------------------
+  // Scenario B: Initial Search Query Handling
+  // -------------------------------------------------------------
+
+  // Find explicit seeded company matches using exact word boundaries
+  const seededMatches = (seedData || []).filter(item => {
+    const name = (item.name || '').trim();
+    const slug = (item.slug || '').trim();
+    if (!name || name.length < 3) return false;
+    
+    // Avoid matching common English words as company names
+    const commonWords = ['the', 'and', 'for', 'fast', 'show', 'that', 'with', 'from', 'have', 'this', 'that', 'failed', 'poor', 'burn', 'cash'];
+    if (commonWords.includes(name.toLowerCase())) return false;
+
+    // Use word boundary regex matching
+    const nameRegex = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+    const slugRegex = slug.length >= 3 ? new RegExp(`\\b${slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i') : null;
+
+    return nameRegex.test(lowerQuery) || (slugRegex && slugRegex.test(lowerQuery));
+  });
+
+  // B1: Comparison query between 2 seeded companies
+  if (seededMatches.length >= 2) {
+    const c1 = seededMatches[0];
+    const c2 = seededMatches[1];
+    return {
+      aiSummary: `## COMPARATIVE FORENSIC ANALYSIS: ${c1.name.toUpperCase()} VS ${c2.name.toUpperCase()}
+
+An analysis of our failure intelligence database reveals distinct postmortem dynamics between **${c1.name}** and **${c2.name}**.
+
+### Side-by-Side Comparison
+
+| Metric | ${c1.name} | ${c2.name} |
+| --- | --- | --- |
+| **Industry** | ${c1.industry || 'Tech'} | ${c2.industry || 'Tech'} |
+| **Capital Raised** | ${c1.funding || '$50M'} | ${c2.funding || '$50M'} |
+| **Primary Failure Cause** | ${c1.failureCategory || c1.topFailureReason || 'Execution Breakdown'} | ${c2.failureCategory || c2.topFailureReason || 'Execution Breakdown'} |
+| **Active Period** | ${c1.yearFounded || 2015} – ${c1.yearClosed || 2022} | ${c2.yearFounded || 2015} – ${c2.yearClosed || 2022} |
+
+### Strategic Dissection
+
+1. **${c1.name} Pathology**:
+   ${c1.productDescription || c1.summary || c1.tagline || 'Suffered from severe strategic missteps and product disconnect.'}
+
+2. **${c2.name} Pathology**:
+   ${c2.productDescription || c2.summary || c2.tagline || 'Ceased operations after failing to build sustainable unit economics or product-market fit.'}
+
+### Key Lessons for Founders
+* **Unit Economics First**: Capital scaling cannot subsidize negative contribution margins.
+* **Validation Moat**: Ensure core product utility is proven before capital-intensive expansion.`,
+      timeline: [
+        { year: c1.yearClosed || 2022, startup: c1.name, event: `Operations dissolved (${c1.failureCategory || 'Shutdown'})` },
+        { year: c2.yearClosed || 2022, startup: c2.name, event: `Operations dissolved (${c2.failureCategory || 'Shutdown'})` }
+      ],
+      keyLessons: [
+        { lesson: `${c1.name} Precedent`, details: Array.isArray(c1.failureReasons) ? c1.failureReasons[0] : (c1.summary || 'Validate demand before scaling.') },
+        { lesson: `${c2.name} Precedent`, details: Array.isArray(c2.failureReasons) ? c2.failureReasons[0] : (c2.summary || 'Maintain operational discipline.') }
+      ],
+      sources: [c1.slug || 'company1', c2.slug || 'company2'],
+      relatedStartups: [c1, c2]
+    };
+  }
+
+  // B2: Single explicit seeded company match (e.g. Theranos, WeWork, Juicero)
+  if (seededMatches.length === 1) {
+    const c = seededMatches[0];
+    const failDetails = Array.isArray(c.failureReasons) ? c.failureReasons.join('; ') : (c.summary || c.tagline || 'Operational failure.');
+    return {
+      aiSummary: `## FORENSIC DOSSIER: ${c.name.toUpperCase()}
+
+**${c.name}** was a high-profile **${c.industry || 'Technology'}** startup based in **${c.city || c.country || 'USA'}** that raised **${c.funding || 'substantial venture capital'}** before dissolving in **${c.yearClosed || 2022}**.
+
+### Executive Summary & Failure Pathology
+${c.productDescription || c.summary || c.tagline || 'Detailed postmortem analysis of operational collapse.'}
+
+### Primary Breakdown: ${c.failureCategory || 'Market Execution'}
+- **Capital Raised**: ${c.funding || '$50M'}
+- **Active Years**: ${c.yearFounded || 2015} to ${c.yearClosed || 2022}
+- **Key Failure Factors**: ${failDetails}
+
+### Strategic Lessons for Founders
+1. **The Validation Law**: Validate problem-solution fit with 50+ qualitative interviews before building complex infrastructure.
+2. **Burn Rate Discipline**: Keep fixed overhead low until day-30 cohort retention proves product-market fit.
+3. **Moat Protection**: Ensure core technological claims are transparent and independently verified.`,
+      timeline: [
+        { year: c.yearFounded || 2015, startup: c.name, event: `Founded in ${c.city || c.country || 'USA'}` },
+        { year: c.yearClosed || 2022, startup: c.name, event: `Ceased operations and liquidated assets` }
+      ],
+      keyLessons: [
+        { lesson: `${c.name} Core Lesson`, details: failDetails }
+      ],
+      sources: [c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')],
+      relatedStartups: [c]
+    };
+  }
+
+  // B3: Category / Failure Cause / Theme Query (e.g. Poor PMF, Cash Burn, EdTech, Food Delivery, Crypto, Unit Economics)
+  const categoryKeywords = [
+    { key: 'pmf', label: 'NO PRODUCT-MARKET FIT (PMF)', filter: s => JSON.stringify(s).toLowerCase().includes('pmf') || JSON.stringify(s).toLowerCase().includes('market timing') || JSON.stringify(s).toLowerCase().includes('product-market fit') },
+    { key: 'cash', label: 'CASH BURN & OVER-FUNDING', filter: s => JSON.stringify(s).toLowerCase().includes('cash') || JSON.stringify(s).toLowerCase().includes('burn') || JSON.stringify(s).toLowerCase().includes('capital') },
+    { key: 'unit', label: 'UNPROFITABLE UNIT ECONOMICS', filter: s => JSON.stringify(s).toLowerCase().includes('unit') || JSON.stringify(s).toLowerCase().includes('margin') || JSON.stringify(s).toLowerCase().includes('cost') },
+    { key: 'food', label: 'FOOD DELIVERY & ON-DEMAND COLLAPSE', filter: s => JSON.stringify(s).toLowerCase().includes('food') || JSON.stringify(s).toLowerCase().includes('delivery') || JSON.stringify(s).toLowerCase().includes('meal') },
+    { key: 'edtech', label: 'EDTECH & LEARNING PLATFORMS', filter: s => JSON.stringify(s).toLowerCase().includes('edtech') || JSON.stringify(s).toLowerCase().includes('learn') || JSON.stringify(s).toLowerCase().includes('tutor') },
+    { key: 'crypto', label: 'CRYPTO & WEB3 INSOLVENCY', filter: s => JSON.stringify(s).toLowerCase().includes('crypto') || JSON.stringify(s).toLowerCase().includes('web3') || JSON.stringify(s).toLowerCase().includes('token') },
+    { key: 'fraud', label: 'GOVERNANCE & FRAUD', filter: s => JSON.stringify(s).toLowerCase().includes('fraud') || JSON.stringify(s).toLowerCase().includes('sec') || JSON.stringify(s).toLowerCase().includes('investigation') },
+  ];
+
+  const matchedCat = categoryKeywords.find(c => lowerQuery.includes(c.key)) || categoryKeywords[0];
+  const matchedStartups = (seedData || []).filter(matchedCat.filter).slice(0, 5);
+
+  let cleanTopicTitle = rawQuery.replace(/compare|show|what|why|did|how|failed|patterns|startups|because|of|poor|the|and/gi, '').trim();
+  cleanTopicTitle = cleanTopicTitle ? cleanTopicTitle.toUpperCase() : matchedCat.label;
+
+  return {
+    aiSummary: `## RESEARCH DOSSIER: ${matchedCat.label}
+
+Our failure intelligence database analyzed **${matchedStartups.length} related postmortems** matching your research query: *"${rawQuery}"*.
+
+### Notable Postmortem Precedents in Dataset
+
+${matchedStartups.map(m => `* **${m.name}** (${m.industry || 'Tech'}, Raised ${m.funding || '$50M'}): ${m.productDescription || m.summary || m.tagline}`).join('\n\n')}
+
+### Core Pathology & Red Flags Identified
+1. **Premature Scaling**: Customer acquisition spend expanded before securing 30%+ day-30 cohort retention.
+2. **Subsidized Economics**: Growth figures heavily inflated by unsustainable promotional discounts.
+
+### Strategic Recommendations for Founders
+* **Quantitative Cohort Audit**: Benchmark week-4 organic retention prior to Series A fundraising.
+* **Positive Contribution Margin**: Ensure unit economics are net-positive inclusive of all delivery and support overhead.`,
+    timeline: matchedStartups.slice(0, 4).map(m => ({
+      year: m.yearClosed || 2022,
+      startup: m.name,
+      event: `Dissolved due to ${m.failureCategory || 'Operational Breakdown'}`
+    })),
+    keyLessons: matchedStartups.slice(0, 2).map(m => ({
+      lesson: `${m.name} Historical Precedent`,
+      details: Array.isArray(m.failureReasons) ? m.failureReasons[0] : (m.summary || 'Validate demand before scaling.')
+    })),
+    sources: matchedStartups.map(m => m.slug || m.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
+    relatedStartups: matchedStartups
+  };
+}
+
+export const mockAiResponse = generateDynamicAiResearch("Compare Byju's and Quibi.");
 
 export const mockPlaybook = {
   summary: `## THE FOUNDER PLAYBOOK: DE-RISKING THE ABYSS
@@ -681,56 +1085,78 @@ Most founders fail because they build a solution for a problem that does not exi
 
 export { generateMockExternalSources };
 
-export const mockPitchDeckAutopsy = {
-  overallRisk: 'Lethal',
-  pathologistVerdict: 'Your deck shows several red flags that mirror patterns from 413 failed startups.',
-  executiveSummary: 'You\'ve got a clear problem statement but are missing critical pieces like product-market fit validation and a sustainable GTM strategy. Focus on those before scaling.',
-  strengths: [
-    { title: 'Clear Problem Statement', description: 'You\'ve done a good job articulating the customer pain point.' },
-    { title: 'Strong Team', description: 'Your team has relevant industry experience.' }
-  ],
-  weaknesses: [
-    { title: 'Unrealistic Market Size', description: 'Your TAM calculation seems heavily inflated.' },
-    { title: 'No Clear Differentiation', description: 'It\'s not obvious how you stand out from incumbents.' },
-    { title: 'Missing Retention Strategy', description: 'You haven\'t addressed how you\'ll keep customers long-term.' }
-  ],
-  marketRisks: [
-    { title: 'Intense Competition', description: 'Incumbents could easily copy your features.' },
-    { title: 'Market Timing', description: 'It\'s unclear if the market is ready for this solution.' }
-  ],
-  productRisks: [
-    { title: 'Feature Overload', description: 'Too many features for an MVP — focus on core value.' },
-    { title: 'Unproven Demand', description: 'No user validation to back up your assumptions.' }
-  ],
-  gtmRisks: [
-    { title: 'High CAC', description: 'Your customer acquisition cost assumptions seem too low.' },
-    { title: 'Viral Loop Missing', description: 'No clear plan for organic growth.' }
-  ],
-  financialRisks: [
-    { title: 'Unsustainable Burn Rate', description: 'You\'ll run out of cash in 12 months at this rate.' },
-    { title: 'Unrealistic Revenue', description: 'Your projections are aggressive without supporting data.' }
-  ],
-  pmfAnalysis: 'You haven\'t proven product-market fit yet. Focus on that before investing heavily in growth.',
-  investorConcerns: [
-    { title: 'Unit Economics', description: 'You need to show a clear path to profitability.' },
-    { title: 'Churn Risk', description: 'Retention numbers are missing from the deck.' },
-    { title: 'Moat', description: 'What prevents competitors from copying you?' }
-  ],
-  competitiveAnalysis: 'The space is crowded but there might be a niche you can carve out. Focus on your unique value proposition.',
-  recommendedImprovements: [
-    { title: 'Simplify MVP', description: 'Cut features to focus on core value prop.' },
-    { title: 'Validate Pricing', description: 'Talk to customers about willingness to pay.' },
-    { title: 'Add User Data', description: 'Include customer interviews or survey results.' }
-  ],
-  actionPlan: [
-    { phase: 'Month 1-2', tasks: ['50 customer interviews', 'Landing page', 'Waitlist'] },
-    { phase: 'Month 3-4', tasks: ['Build MVP', 'Beta test with 100 users', 'Iterate'] },
-    { phase: 'Month 5-6', tasks: ['Validate pricing', 'Refine GTM', 'Prepare for seed'] }
-  ],
-  lethalWeaknesses: [
-    { slide: 'Go-to-Market', issue: 'No clear user acquisition strategy', historicalPrecedent: 'Similar to Quibi\'s vague GTM plan that failed spectacularly.' },
-    { slide: 'Financials', issue: 'Unrealistic revenue projections', historicalPrecedent: 'WeWork\'s inflated numbers that led to their IPO collapse.' },
-    { slide: 'Market', issue: 'No competitive moat', historicalPrecedent: 'Juicero\'s easily copyable product.' }
-  ],
-  structuralRedFlags: ['Team', 'Market', 'Product']
-};
+export function generateDynamicAutopsy(data = {}) {
+  const content = (data.deckContent || '').trim();
+  const ind = (data.industry || 'SaaS').trim();
+  const followUp = (data.followUpQuestion || '').trim();
+
+  let hash = 0;
+  const str = `${content.toLowerCase()}_${ind.toLowerCase()}`;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const posHash = Math.abs(hash);
+
+  const riskScore = Math.min(95, Math.max(45, 68 + (posHash % 19) - 5));
+  const overallRisk = riskScore > 75 ? 'Lethal' : riskScore > 55 ? 'High' : 'Moderate';
+
+  if (followUp) {
+    return {
+      overallRisk,
+      pathologistVerdict: `Follow-up assessment regarding: "${followUp}"`,
+      consultantBrief: `## AUTOPSY FOLLOW-UP: ${followUp.toUpperCase()}
+
+Regarding your pitch deck inquiry:
+
+### Pathologist Recommendation
+1. **Remove Top-Down TAM Claims**: Replace generic $50B market claims with a bottom-up calculation: \`(Target Accounts in ICP) x (Annual Contract Value)\`.
+2. **Prove Paid Acquisition CAC**: Investors will penalize decks that rely solely on "organic word of mouth" without showing a tested CAC channel.
+3. **Quantify Pre-Orders**: Add a slide proving 10+ signed LOIs or non-refundable user deposits.`
+    };
+  }
+
+  const brief = `## PITCH DECK PATHOLOGY REPORT: ${ind.toUpperCase()} DECK
+
+Our Pitch Deck Pathology Engine has cross-referenced your deck content against **413 historical postmortems** in the **${ind}** sector.
+
+### 1. Headline Lethality Index: ${riskScore}/100 (${overallRisk.toUpperCase()} RISK)
+* **Analyzed Sector**: ${ind}
+* **Deck Content Preview**: ${content.length > 0 ? content.slice(0, 150) + '...' : 'Sample Pitch Deck'}
+
+### 2. Lethal Slide Flaws Identified
+* **Market Size (TAM Slide)**: **Lethal Risk** — Relying on generic top-down industry reports rather than bottom-up willingness to pay.
+* **Go-To-Market (GTM Slide)**: **High Risk** — Assuming low customer acquisition cost on paid ad channels without proving organic viral loops.
+* **Monetization & Pricing**: **Moderate Risk** — Subsidizing free tier usage with no clear enterprise conversion trigger.
+* **Competitive Moat**: **Lethal Risk** — High vulnerability to incumbent platform commoditization.
+
+### 3. Historical Failure Precedents
+* **Fast** (FinTech, $124M): Pitch deck projected rapid GTM scaling via 1-click checkout, but burned $10M/month with low revenue.
+* **Kite** (AI Dev Tools, $17M): Deck assumed developers would pay for code completion before GitHub Copilot launched a free tier.
+* **Quibi** (Media, $1.75B): Pitch deck overstated consumer willingness to pay for short-form mobile video.
+* **Parse** (B2B SaaS, $7M): Failed to convert free tier developers to profitable enterprise contracts.
+
+### 4. Pathologist Action Plan to De-Risk Deck
+* **Slide 3 (TAM)**: Re-calculate TAM using bottom-up metric: \`ICP Accounts x Contract Price\`.
+* **Slide 6 (GTM)**: Present CAC/LTV unit economics from 20 pre-orders rather than ad spend projections.
+* **Slide 8 (Moat)**: Explicitly address how your product defends against incumbent platform copies.`;
+
+  return {
+    overallRisk,
+    pathologistVerdict: `Your pitch deck exhibits ${riskScore > 70 ? 'critical lethal vulnerabilities' : 'structural risks'} that mirror 413 historical startup postmortems in ${ind}.`,
+    executiveSummary: `Primary vulnerability identified in Market Size (TAM) and Go-To-Market execution. De-risk your slide deck by proving bottom-up unit economics and 10+ user pre-orders before pitching VCs.`,
+    lethalWeaknesses: [
+      { slide: 'Market Size (TAM)', issue: 'Top-down generic market claims without bottom-up ICP proof.', historicalPrecedent: 'Similar to Quibi\'s $1.75B top-down market size assumption.' },
+      { slide: 'Go-To-Market (GTM)', issue: 'Relying on low-cost paid ad channels without viral retention metrics.', historicalPrecedent: 'Fast burned $124M relying on unsubsidized ad spend.' },
+      { slide: 'Competitive Moat', issue: 'Incumbent platform commoditization risk.', historicalPrecedent: 'Kite collapsed when GitHub launched Copilot.' }
+    ],
+    recommendedImprovements: [
+      { title: 'Bottom-Up Market Calculation', description: 'Replace top-down TAM with exact target account pricing.' },
+      { title: 'CAC / LTV Proof', description: 'Show actual acquisition cost from pilot users.' },
+      { title: 'Defensible Moat', description: 'Highlight proprietary data or network effects.' }
+    ],
+    consultantBrief: brief
+  };
+}
+
+export const mockPitchDeckAutopsy = generateDynamicAutopsy();

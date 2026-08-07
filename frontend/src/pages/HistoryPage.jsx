@@ -37,7 +37,7 @@ const HistoryPage = () => {
           {history.map((item) => (
             <button
               key={item.id}
-              onClick={() => navigate(`/assistant?q=${encodeURIComponent(item.query)}`)}
+              onClick={() => navigate('/scan')}
               className="w-full pv-card p-5 text-left flex items-center justify-between gap-4 hover:border-accent/40"
             >
               <div className="flex items-start gap-4">
@@ -55,9 +55,9 @@ const HistoryPage = () => {
         <div className="pv-card p-10 text-center">
           <Clock className="w-12 h-12 text-accent mx-auto mb-4" />
           <h2 className="text-xl font-display font-bold mb-2">No research history yet</h2>
-          <p className="text-text-secondary text-sm mb-6">Run a query in the AI Assistant and it will appear here.</p>
-          <Link to="/assistant" className="pv-btn-primary">
-            Open assistant <ArrowRight className="w-4 h-4" />
+          <p className="text-text-secondary text-sm mb-6">Run a scan in the AI Risk Scanner and it will appear here.</p>
+          <Link to="/scan" className="pv-btn-primary">
+            Open Risk Scanner <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       )}

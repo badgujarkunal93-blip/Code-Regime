@@ -6,7 +6,10 @@ import {
   mockPlaybook,
   mockPitchDeckAutopsy,
   getStartupBySlug,
-  generateMockExternalSources
+  generateMockExternalSources,
+  generateDynamicAiResearch,
+  generateDynamicRiskScan,
+  generateDynamicAutopsy
 } from './mockApi';
 import { getMockSecDashboard, mockSecLookup } from './secDashboardMock';
 import { getRandomQuestions } from './quizData';
@@ -90,7 +93,7 @@ const mockApiHandler = async (config) => {
         }
       };
     }
-    
+
     // Check if it's a single startup request (has slug)
     const match = url.match(/\/startups\/([^/?#]+)/);
     if (match) {
@@ -99,7 +102,7 @@ const mockApiHandler = async (config) => {
         data: getStartupBySlug(slug)
       };
     }
-    
+
     return {
       data: {
         data: mockStartups,
@@ -108,27 +111,35 @@ const mockApiHandler = async (config) => {
       }
     };
   }
-  
+
   // Mock /ai/risk-scan endpoint
   if (url.includes('/ai/risk-scan')) {
-    return { data: mockRiskScan };
+    let body = {};
+    try {
+      body = typeof data === 'string' ? JSON.parse(data) : (data || {});
+    } catch {}
+    return { data: generateDynamicRiskScan(body) };
   }
-  
+
   // Mock /ai/research endpoint
   if (url.includes('/ai/research')) {
     return { data: mockAiResponse };
   }
-  
+
   // Mock /ai/playbook endpoint
   if (url.includes('/ai/playbook')) {
     return { data: mockPlaybook };
   }
-  
+
   // Mock /ai/autopsy endpoint
   if (url.includes('/ai/autopsy')) {
-    return { data: mockPitchDeckAutopsy };
+    let body = {};
+    try {
+      body = typeof data === 'string' ? JSON.parse(data) : (data || {});
+    } catch {}
+    return { data: generateDynamicAutopsy(body) };
   }
-  
+
   // Mock /insights endpoint
   if (url.includes('/insights')) {
     return {
@@ -167,7 +178,7 @@ const mockApiHandler = async (config) => {
       }
     };
   }
-  
+
   // Mock /graph/data endpoint
   if (url.includes('/graph/data')) {
     return {
@@ -198,7 +209,7 @@ const mockApiHandler = async (config) => {
       }
     };
   }
-  
+
   // Mock /sec endpoints (Financial Intelligence dashboard)
   if (url.includes('/sec/dashboard')) {
     const urlObj = new URL(url, 'http://localhost');

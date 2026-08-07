@@ -11,7 +11,7 @@ const Signup = () => {
   const { refresh } = useBookmarks();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/assistant';
+  const from = location.state?.from || '/scan';
 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');

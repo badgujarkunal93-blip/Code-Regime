@@ -198,7 +198,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
       icon: Zap,
       defaultOpen: false,
       items: [
-        { name: 'AI Assistant', path: '/assistant', icon: Sparkles },
         { name: 'Risk Scanner', path: '/scan', icon: Flame },
         { name: 'Pitch Deck Autopsy', path: '/autopsy', icon: FileText },
       ]

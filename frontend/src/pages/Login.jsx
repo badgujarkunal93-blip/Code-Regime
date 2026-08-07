@@ -11,7 +11,7 @@ const Login = () => {
   const { refresh } = useBookmarks();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/assistant';
+  const from = location.state?.from || '/scan';
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
