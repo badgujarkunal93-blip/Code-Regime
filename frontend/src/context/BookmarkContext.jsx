@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import api from '../lib/api';
 import { useAuth } from './AuthContext';
+import { db, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from '../lib/firebase';
 
 const BookmarkContext = createContext({ slugs: [], isBookmarked: () => false, toggleBookmark: () => {}, refresh: () => {} });
 
 export const BookmarkProvider = ({ children }) => {
-  const { isAuthed } = useAuth();
+  const { user, isAuthed } = useAuth();
   const [slugs, setSlugs] = useState([]);
 
   const refresh = useCallback(async () => {
@@ -13,13 +14,34 @@ export const BookmarkProvider = ({ children }) => {
       setSlugs([]);
       return;
     }
+    // Try Firestore first if user has UID
+    if (user?.id) {
+      try {
+        const userDocRef = doc(db, 'users', user.id);
+        const userSnap = await getDoc(userDocRef);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          if (Array.isArray(data.bookmarks)) {
+            setSlugs(data.bookmarks);
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback to API/local
+      }
+    }
+
     try {
       const { data } = await api.get('/bookmarks');
       setSlugs(data.slugs || []);
     } catch {
-      setSlugs([]);
+      // Local fallback
+      const saved = localStorage.getItem(`pv_bookmarks_${user?.id || 'demo'}`);
+      if (saved) {
+        try { setSlugs(JSON.parse(saved)); } catch {}
+      }
     }
-  }, [isAuthed]);
+  }, [isAuthed, user]);
 
   useEffect(() => {
     refresh();
@@ -30,8 +52,25 @@ export const BookmarkProvider = ({ children }) => {
   const toggleBookmark = useCallback(
     async (slug) => {
       const currentlyOn = slugs.includes(slug);
-      // optimistic update
-      setSlugs((prev) => (currentlyOn ? prev.filter((s) => s !== slug) : [...prev, slug]));
+      const nextSlugs = currentlyOn ? slugs.filter((s) => s !== slug) : [...slugs, slug];
+      
+      // Optimistic state update
+      setSlugs(nextSlugs);
+      localStorage.setItem(`pv_bookmarks_${user?.id || 'demo'}`, JSON.stringify(nextSlugs));
+
+      // Sync with Firestore
+      if (user?.id) {
+        try {
+          const userDocRef = doc(db, 'users', user.id);
+          await setDoc(userDocRef, {
+            bookmarks: currentlyOn ? arrayRemove(slug) : arrayUnion(slug)
+          }, { merge: true });
+        } catch (e) {
+          // Ignore Firestore sync errors in offline mode
+        }
+      }
+
+      // Sync with API
       try {
         if (currentlyOn) {
           await api.delete(`/bookmarks/${slug}`);
@@ -39,11 +78,10 @@ export const BookmarkProvider = ({ children }) => {
           await api.post('/bookmarks', { slug });
         }
       } catch {
-        // revert on failure
-        refresh();
+        // Silently keep local optimistic state
       }
     },
-    [slugs, refresh]
+    [slugs, user]
   );
 
   return (

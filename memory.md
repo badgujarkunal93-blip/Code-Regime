@@ -158,6 +158,25 @@ cd backend && npm install
 
 > Append newest entries at the **top**. Each entry: date, model, summary, files, verification, follow-ups.
 
+### Session 28 — 2026-08-07 — 413 Startups Firestore Seeder & Direct Firestore Data Layer (model: Gemini 3.6 Flash)
+- **Summary:** Built complete Firestore data architecture for the 413+ startup postmortems dataset:
+  - Created `frontend/src/lib/firebaseSeed.js`: Batch upload seeder function `seedFirestoreCompanies()` that pushes all 413 startup failure cases directly into the Firestore `companies` collection.
+  - Created `frontend/src/lib/firebaseData.js`: Direct Firestore query layer (`fetchFirestoreStartups`, `fetchFirestoreStartupBySlug`) with resilient local dataset fallback.
+  - Added a "Sync 413 Startups to Firestore" action button directly in `TopBar.jsx` profile menu for single-click UI database seeding.
+- **Files:** `frontend/src/lib/firebaseSeed.js`, `frontend/src/lib/firebaseData.js`, `frontend/src/lib/mockApi.js`, `frontend/src/components/TopBar.jsx`, `memory.md`.
+- **Verification:** Ran `npm run build` which built cleanly in 23.47s with 0 compilation errors.
+- **Follow-up:** None.
+
+### Session 27 — 2026-08-07 — Full Firebase Authentication & Firestore Integration (model: Gemini 3.6 Flash)
+- **Summary:** Migrated the web application's authentication and user state persistence to Firebase:
+  - Installed `firebase` (^10.14.0) in `frontend/package.json`.
+  - Created `frontend/src/lib/firebase.js` to initialize Firebase App, Firebase Auth (`getAuth`), and Firestore (`getFirestore`).
+  - Upgraded `AuthContext.jsx` to integrate Firebase Auth (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `onAuthStateChanged`, `signOut`) while maintaining instant demo mode (`demo@pivotvault.com` / `password123`) for presentation reliability.
+  - Upgraded `BookmarkContext.jsx` to sync user bookmarks with Firestore document storage (`doc(db, 'users', uid)`).
+- **Files:** `frontend/package.json`, `frontend/src/lib/firebase.js`, `frontend/src/context/AuthContext.jsx`, `frontend/src/context/BookmarkContext.jsx`, `memory.md`.
+- **Verification:** Ran `npm run build` which built cleanly in 11.07s with 0 errors.
+- **Follow-up:** None.
+
 ### Session 26 — 2026-08-07 — Sign-in & Sign-up Navigation Safeguard Fix (model: Claude Opus 4.6 / Gemini 3.6 Flash)
 - **Summary:** Fixed sign-in and sign-up navigation flows:
   - Enabled `VITE_DEMO_MODE=true` in `frontend/.env` to ensure all API calls fall back to mock data cleanly without database connectivity dependencies.

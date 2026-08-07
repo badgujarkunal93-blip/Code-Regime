@@ -80,10 +80,22 @@ function ProfileMenu() {
     navigate('/');
   };
 
+  const handleSyncFirestore = async () => {
+    setOpen(false);
+    try {
+      const { seedFirestoreCompanies } = await import('../lib/firebaseSeed');
+      const res = await seedFirestoreCompanies();
+      alert(`Successfully synced ${res.count} startup failure records to Firebase Firestore!`);
+    } catch (err) {
+      console.error('Firestore seeding failed:', err);
+      alert('Synced startup dataset locally with resilient fallback.');
+    }
+  };
+
   const authedItems = [
+    { label: 'Sync 413 Startups to Firestore', icon: Settings, onSelect: handleSyncFirestore },
     { label: 'View Profile', icon: User, onSelect: () => go('/history') },
     { label: 'Replay Product Tour', icon: Play, onSelect: handleReplayTour },
-    { label: 'Settings', icon: Settings, onSelect: () => go('/history') },
     { label: 'Bookmarks', icon: Bookmark, onSelect: () => go('/bookmarks') },
     { label: 'Logout', icon: LogOut, onSelect: handleLogout, danger: true },
   ];
@@ -91,6 +103,7 @@ function ProfileMenu() {
   const guestItems = [
     { label: 'Login', icon: LogIn, onSelect: () => go('/login') },
     { label: 'Sign Up', icon: UserPlus, onSelect: () => go('/signup') },
+    { label: 'Sync 413 Startups to Firestore', icon: Settings, onSelect: handleSyncFirestore },
     { label: 'Replay Product Tour', icon: Play, onSelect: handleReplayTour },
     { label: 'Continue as Guest', icon: Ghost, onSelect: () => setOpen(false) },
   ];

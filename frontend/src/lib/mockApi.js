@@ -1,4 +1,5 @@
 import seedData from '../data/seedData.json';
+export { fetchFirestoreStartups, fetchFirestoreStartupBySlug } from './firebaseData';
 
 function slugify(str) {
   return (str || '')
