@@ -1,11 +1,8 @@
 # Project Memory
 
-<<<<<<< HEAD
-> Last updated: 2026-08-07 | Always update this file after every session.
+> Last updated: 2026-08-08 | Always update this file after every session.
 >
-> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. Keep entries concise, factual, and append-only at the top.
-=======
-> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. After you finish meaningful work, update the relevant sections and append to the Session History log at the bottom.
+> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. After you finish meaningful work, update the relevant sections and append to the Session History log at the bottom. Keep entries concise, factual, and append-only.
 
 ---
 
@@ -154,11 +151,16 @@ cd backend && npm install
 
 ### Validation
 - `cd frontend && npm run build` must be clean. No unit tests / no lint. Use a browser agent for runtime/console checks.
->>>>>>> 94c3f7c (feat: Add Risk Scanner v2, Hall of Ghosts chat fixes, structured scan options, and successful company dataset)
 
 ---
 
 ## Session History
+
+### Session 35 — 2026-08-08 — Codebase Synchronization and Audit (model: Gemini 3.5 Flash)
+- **Summary:** Pulled latest commits from origin/main, including the normalization of startup funding values and removal of the Financial Intelligence feature/route. Resolved checked-in git merge conflicts in `memory.md` and ran a clean production build check.
+- **Files:** `memory.md`.
+- **Verification:** Ran `npm run build` in `frontend/` (successful and clean).
+- **Follow-up:** None.
 
 ### Session 34 — 2026-08-07 — Startup-style README Redesign (model: GPT-5)
 - **Summary:** Rewrote `README.md` into a polished startup-facing presentation per user request (“startup one”).
@@ -173,9 +175,6 @@ cd backend && npm install
 
 ---
 
-<<<<<<< HEAD
-(Older session logs retained in repository history prior to this rewrite.)
-=======
 ### Session 32 — 2026-08-07 — Groq API Key Integration for AI Risk Engine & LLM Endpoints (model: Gemini 3.6 Flash)
 - **Summary:** Configured full Groq LLM API key support (`llama-3.3-70b-versatile`) across backend AI routes (`/risk-scan`, `/research`, `/playbook`, `/autopsy`, `/compare`, `/ghost-chat`):
   - Updated `backend/.env` with `GROQ_API_KEY` environment variable.
