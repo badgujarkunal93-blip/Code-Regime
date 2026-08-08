@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -118,6 +118,7 @@ function AppContent() {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [showTour, setShowTour] = useState(false);
   const { isLoading, loadingMessage } = useLoading();
+  const location = useLocation();
 
   const sidebar = {
     isCollapsed,
@@ -130,9 +131,6 @@ function AppContent() {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
-  // Intro loading animation removed for instant app loading
-  const showIntro = false;
-
   const handleTourComplete = () => {
     localStorage.setItem(ONBOARDED_KEY, '1');
     setShowTour(false);
@@ -143,60 +141,75 @@ function AppContent() {
     setShowTour(false);
   };
 
+  const isLandingPage = location.pathname === '/';
+
+  if (isLandingPage) {
+    return (
+      <ProductTourContext.Provider value={{ showTour, setShowTour, sidebar }}>
+        <>
+          {isLoading && <PivotVaultLoader customMessage={loadingMessage} />}
+          <ScrollToTop />
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<NewLandingPage />} />
+            </Routes>
+          </Suspense>
+        </>
+      </ProductTourContext.Provider>
+    );
+  }
+
   return (
     <ProductTourContext.Provider value={{ showTour, setShowTour, sidebar }}>
       <>
         {isLoading && <PivotVaultLoader customMessage={loadingMessage} />}
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <OnboardingGate />
-          <div
-            className="pv-app-shell"
-            data-sidebar={isCollapsed ? 'collapsed' : 'expanded'}
-          >
-            <ScrollToTop />
-            <Sidebar 
-              isCollapsed={isCollapsed} 
-              setIsCollapsed={setIsCollapsed}
-              isMobileOpen={isMobileOpen}
-              setIsMobileOpen={setIsMobileOpen}
-            />
-            <div className="pv-app-column">
-              <TopBar onOpenSidebar={() => setIsMobileOpen(true)} />
-              <main className="pv-app-main">
-                <Suspense fallback={<RouteFallback />}>
-                  <Routes>
-                    <Route path="/" element={<NewLandingPage />} />
-                    <Route path="/dashboard" element={<LandingPage />} />
-                    <Route path="/explore" element={<FailureExplorer />} />
-                    <Route path="/startup/:slug" element={<PostmortemPage />} />
-                    <Route path="/scan" element={<ProtectedRoute><RiskScanner /></ProtectedRoute>} />
-                    <Route path="/graph" element={<KnowledgeGraph />} />
-                    <Route path="/confessions" element={<ConfessionWall />} />
-                    <Route path="/insights" element={<InsightsDashboard />} />
-                    <Route path="/assistant" element={<Navigate to="/scan" replace />} />
-                    <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
-                    <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
-                    <Route path="/playbook" element={<ProtectedRoute><FounderPlaybook /></ProtectedRoute>} />
-                    <Route path="/compare" element={<CompareStartups />} />
-                    <Route path="/ghosts" element={<HallOfGhosts />} />
-                    <Route path="/autopsy" element={<ProtectedRoute><PitchDeckAutopsy /></ProtectedRoute>} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                  </Routes>
-                </Suspense>
-              </main>
-            </div>
+        <OnboardingGate />
+        <div
+          className="pv-app-shell"
+          data-sidebar={isCollapsed ? 'collapsed' : 'expanded'}
+        >
+          <ScrollToTop />
+          <Sidebar 
+            isCollapsed={isCollapsed} 
+            setIsCollapsed={setIsCollapsed}
+            isMobileOpen={isMobileOpen}
+            setIsMobileOpen={setIsMobileOpen}
+          />
+          <div className="pv-app-column">
+            <TopBar onOpenSidebar={() => setIsMobileOpen(true)} />
+            <main className="pv-app-main">
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/dashboard" element={<LandingPage />} />
+                  <Route path="/explore" element={<FailureExplorer />} />
+                  <Route path="/startup/:slug" element={<PostmortemPage />} />
+                  <Route path="/scan" element={<ProtectedRoute><RiskScanner /></ProtectedRoute>} />
+                  <Route path="/graph" element={<KnowledgeGraph />} />
+                  <Route path="/confessions" element={<ConfessionWall />} />
+                  <Route path="/insights" element={<InsightsDashboard />} />
+                  <Route path="/assistant" element={<Navigate to="/scan" replace />} />
+                  <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
+                  <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
+                  <Route path="/playbook" element={<ProtectedRoute><FounderPlaybook /></ProtectedRoute>} />
+                  <Route path="/compare" element={<CompareStartups />} />
+                  <Route path="/ghosts" element={<HallOfGhosts />} />
+                  <Route path="/autopsy" element={<ProtectedRoute><PitchDeckAutopsy /></ProtectedRoute>} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                </Routes>
+              </Suspense>
+            </main>
           </div>
-          <AnimatePresence>
-            {showTour && (
-              <ProductTour 
-                onFinish={handleTourComplete}
-                onSkip={handleTourSkip}
-                sidebar={sidebar}
-              />
-            )}
-          </AnimatePresence>
-        </Router>
+        </div>
+        <AnimatePresence>
+          {showTour && (
+            <ProductTour 
+              onFinish={handleTourComplete}
+              onSkip={handleTourSkip}
+              sidebar={sidebar}
+            />
+          )}
+        </AnimatePresence>
       </>
     </ProductTourContext.Provider>
   );
@@ -204,9 +217,11 @@ function AppContent() {
 
 function App() {
   return (
-    <LoadingProvider>
-      <AppContent />
-    </LoadingProvider>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <LoadingProvider>
+        <AppContent />
+      </LoadingProvider>
+    </Router>
   );
 }
 
