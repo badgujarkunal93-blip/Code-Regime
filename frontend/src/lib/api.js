@@ -16,7 +16,6 @@ import {
   upvoteMockConfession,
   filterMockStartups
 } from './mockApi';
-import { getMockSecDashboard, mockSecLookup } from './secDashboardMock';
 import { getRandomQuestions } from './quizData';
 
 export const API_URL =
@@ -279,20 +278,7 @@ const mockApiHandler = async (config) => {
     };
   }
 
-  // Mock /sec endpoints (Financial Intelligence dashboard)
-  if (url.includes('/sec/dashboard')) {
-    const urlObj = new URL(url, 'http://localhost');
-    const ciks = urlObj.searchParams.get('ciks') || urlObj.searchParams.get('compare') || 'AAPL,MSFT';
-    const ids = ciks.split(',').map((s) => s.trim()).filter(Boolean);
-    return { data: getMockSecDashboard(ids) };
-  }
-  if (url.includes('/sec/lookup')) {
-    const urlObj = new URL(url, 'http://localhost');
-    const q = urlObj.searchParams.get('q') || '';
-    const matches = mockSecLookup(q);
-    if (matches.length === 1) return { data: matches[0] };
-    return { data: { matches } };
-  }
+
 
   if (url.includes('/companies/search')) {
     const urlObj = new URL(url, 'http://localhost');

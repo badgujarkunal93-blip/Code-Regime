@@ -203,11 +203,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
       ]
     },
     {
-      name: 'Financials & Playbook',
+      name: 'Playbook & Analytics',
       icon: LineChart,
       defaultOpen: false,
       items: [
-        { name: 'Financial Intelligence', path: '/financials', icon: LineChart },
         { name: 'Competitor Compare', path: '/compare', icon: GitCompare },
         { name: 'Founder Playbook', path: '/playbook', icon: ClipboardCheck },
         { name: 'Insights Dashboard', path: '/insights', icon: BarChart2 },

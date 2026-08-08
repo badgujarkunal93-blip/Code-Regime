@@ -522,6 +522,13 @@ cd backend && npm install
 - **Files:** `frontend/src/lib/mockApi.js`, `memory.md`.
 - **Verification:** Verified live in Chrome DevTools on `http://localhost:5173/scan`. Preset 1 returns 38% Risk Score with "INVESTOR APPROVED — Low Structural Risk" banner. Build clean (0 errors).
 
+### Session 13 — 2026-08-08 — Financial Intelligence Feature Removal (model: Gemini 3.6 Flash)
+- **Removed Financial Intelligence Route & Navigation**: Removed `Financial Intelligence` item from `Sidebar.jsx`, renamed section to `Playbook & Analytics`, removed `/financials` route in `App.jsx`.
+- **Cleaned Up Mock Endpoints & Page**: Removed `/sec` mock handlers and `secDashboardMock` import in `api.js`. Replaced `FinancialIntelligence.jsx` with a clean redirect component to `/scan`.
+- **Files:** `frontend/src/components/Sidebar.jsx`, `frontend/src/App.jsx`, `frontend/src/lib/api.js`, `frontend/src/pages/FinancialIntelligence.jsx`, `memory.md`.
+- **Verification:** Verified clean production build (`npm run build` completed in 11.26s with 0 errors).
+
+
 
 
 
