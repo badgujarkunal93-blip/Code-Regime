@@ -1,11 +1,8 @@
 # Project Memory
 
-<<<<<<< HEAD
-> Last updated: 2026-08-07 | Always update this file after every session.
+> Last updated: 2026-08-08 | Always update this file after every session.
 >
-> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. Keep entries concise, factual, and append-only at the top.
-=======
-> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. After you finish meaningful work, update the relevant sections and append to the Session History log at the bottom.
+> **READ THIS FIRST.** This file is the single source of truth for any AI assistant working on **PivotVault**. Read it at the start of **every** session instead of re-scanning the entire codebase. After you finish meaningful work, update the relevant sections and append to the Session History log at the bottom. Keep entries concise, factual, and append-only.
 
 ---
 
@@ -154,11 +151,22 @@ cd backend && npm install
 
 ### Validation
 - `cd frontend && npm run build` must be clean. No unit tests / no lint. Use a browser agent for runtime/console checks.
->>>>>>> 94c3f7c (feat: Add Risk Scanner v2, Hall of Ghosts chat fixes, structured scan options, and successful company dataset)
 
 ---
 
 ## Session History
+
+### Session 36 — 2026-08-08 — Landing Page Integration (model: Gemini 3.5 Flash)
+- **Summary:** Integrated the new landing page from the `PivotVault1 copy` directory into the active prototype. Used an `iframe` rendering pattern in `NewLandingPage.jsx` pointing to a programmatically parsed and linked `/landing.html` (containing `<base target="_parent">` and updated href targets) to isolate styling context. Removed "Solution" and "Pricing" navigation links from desktop/mobile menus, and added a custom styled "About PivotVault" grid section detailing the platform mission right before the FAQ panel. Redesigned all 5 feature illustrations inside the cards in the "Everything You Need To Build Smarter Startups" section into high-fidelity SaaS application mockups. Overhauled: the AI pipeline (built a dashboard console detailing a multi-stage execution run with animated dashed connection lines and glowing active state cards), suggested questions (built a search interface with interactive inputs, suggested lists, and recent search logs), knowledge graph (built a network graph centered on an active highlighted WeWork node with thin dashed connections to monochrome role nodes), AI assistant (built a multi-pane thread console showing user chats and structured markdown answers with risk flags and recommendations), and startup timeline (built a vertical milestones track with hover-cards for each corporate phase and highlighted shutdown end states). Mapped `/` to `NewLandingPage` and `/dashboard` to the old `LandingPage` component. Isolated the `/` route from the prototype layout shell (`pv-app-shell`, `Sidebar`, and `TopBar`) by moving the `<Router>` to root `<App>` and dynamically bypassing the layout in `AppContent` when visiting the landing page.
+- **Files:** `frontend/src/App.jsx`, `frontend/src/pages/NewLandingPage.jsx`, `frontend/public/landing.html`, `memory.md`, static public assets.
+- **Verification:** Ran `npm run build` inside `frontend/` (succeeded cleanly with zero errors).
+- **Follow-up:** None.
+
+### Session 35 — 2026-08-08 — Codebase Synchronization and Audit (model: Gemini 3.5 Flash)
+- **Summary:** Pulled latest commits from origin/main, including the normalization of startup funding values and removal of the Financial Intelligence feature/route. Resolved checked-in git merge conflicts in `memory.md` and ran a clean production build check.
+- **Files:** `memory.md`.
+- **Verification:** Ran `npm run build` in `frontend/` (successful and clean).
+- **Follow-up:** None.
 
 ### Session 34 — 2026-08-07 — Startup-style README Redesign (model: GPT-5)
 - **Summary:** Rewrote `README.md` into a polished startup-facing presentation per user request (“startup one”).
@@ -173,9 +181,6 @@ cd backend && npm install
 
 ---
 
-<<<<<<< HEAD
-(Older session logs retained in repository history prior to this rewrite.)
-=======
 ### Session 32 — 2026-08-07 — Groq API Key Integration for AI Risk Engine & LLM Endpoints (model: Gemini 3.6 Flash)
 - **Summary:** Configured full Groq LLM API key support (`llama-3.3-70b-versatile`) across backend AI routes (`/risk-scan`, `/research`, `/playbook`, `/autopsy`, `/compare`, `/ghost-chat`):
   - Updated `backend/.env` with `GROQ_API_KEY` environment variable.
