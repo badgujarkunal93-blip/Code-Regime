@@ -10,13 +10,39 @@ function slugify(str) {
 }
 
 function parseFundingAmount(fundingStr) {
-  if (!fundingStr) return 50000000;
-  const clean = String(fundingStr).replace(/[^0-9.]/g, '');
-  const num = parseFloat(clean) || 50;
-  if (fundingStr.includes('B')) return num * 1000000000 * 80;
-  if (fundingStr.includes('M')) return num * 1000000 * 80;
-  if (fundingStr.includes('k') || fundingStr.includes('K')) return num * 1000 * 80;
-  return num * 80;
+  if (!fundingStr) return 4250000000; // Default $50M (₹425 Cr)
+  const str = String(fundingStr).trim();
+  const clean = str.replace(/[^0-9.]/g, '');
+  const num = parseFloat(clean);
+  if (isNaN(num) || num <= 0) return 4250000000; // Default $50M (₹425 Cr)
+
+  const isBillions = /b|billion/i.test(str);
+  const isMillions = /m|million/i.test(str);
+  const isThousands = /k|thousand/i.test(str);
+
+  let rawInr = 0;
+  if (isBillions) {
+    rawInr = num * 1000000000 * 85;
+  } else if (isMillions) {
+    rawInr = num * 1000000 * 85;
+  } else if (isThousands) {
+    rawInr = num * 1000 * 85;
+  } else {
+    // String has no B/M/K unit suffix (e.g., "50", "4000", "500")
+    if (num < 100) {
+      // e.g. 50 -> $50M (₹425 Cr)
+      rawInr = num * 1000000 * 85;
+    } else if (num <= 10000) {
+      // e.g. 4000 -> $4M ($4,000k) or $40M
+      rawInr = num * 1000 * 85;
+    } else {
+      // Raw dollar value, e.g. 50000000
+      rawInr = num * 85;
+    }
+  }
+
+  // Ensure a genuine minimum funding threshold of $500k (₹4.25 Cr) so no startup shows 4000rs
+  return Math.max(Math.round(rawInr), 42500000);
 }
 
 // Map 413 seed.json companies to normalized mock startup objects

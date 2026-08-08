@@ -528,6 +528,13 @@ cd backend && npm install
 - **Files:** `frontend/src/components/Sidebar.jsx`, `frontend/src/App.jsx`, `frontend/src/lib/api.js`, `frontend/src/pages/FinancialIntelligence.jsx`, `memory.md`.
 - **Verification:** Verified clean production build (`npm run build` completed in 11.26s with 0 errors).
 
+### Session 14 — 2026-08-08 — Startup Funding Amount Normalization & Fix (model: Gemini 3.6 Flash)
+- **Identified & Fixed Root Cause**: `parseFundingAmount` in `frontend/src/lib/mockApi.js` evaluated raw numeric strings (e.g. `"50"` for $50M) without B/M/K unit suffixes directly as `num * 80` (50 * 80 = 4000), causing cards to render unrealistic amounts like **"₹4,000"**.
+- **Upgraded Funding Parser Engine**: Added heuristic scaling for un-suffixed strings (<100 scaled to Millions USD, 100–10,000 scaled to Thousands/Millions USD, exchange rate set to ₹85/$), and established a minimum funding floor of $500K (₹4.25 Crore).
+- **Files:** `frontend/src/lib/mockApi.js`, `memory.md`.
+- **Verification:** Verified clean production build (`npm run build` completed in 10.59s with 0 errors).
+
+
 
 
 
