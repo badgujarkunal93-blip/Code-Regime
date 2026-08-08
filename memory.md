@@ -156,6 +156,12 @@ cd backend && npm install
 
 ## Session History
 
+### Session 36 — 2026-08-08 — Landing Page Integration (model: Gemini 3.5 Flash)
+- **Summary:** Integrated the new landing page from the `PivotVault1 copy` directory into the active prototype. Saved the parsed and programmatically link-updated body HTML into `public/landing_body.html` and copied all related assets (`_next`, `logos`, `images`, `avatar-images`). Designed and added `NewLandingPage.jsx` component that dynamically mounts CSS files and intercepts click events for React Router single-page navigation. Mapped `/` to `NewLandingPage` and `/dashboard` to the old `LandingPage` component.
+- **Files:** `frontend/src/App.jsx`, `frontend/src/pages/NewLandingPage.jsx`, `memory.md`, static public assets.
+- **Verification:** Ran `npm run build` inside `frontend/` (succeeded cleanly with zero errors).
+- **Follow-up:** None.
+
 ### Session 35 — 2026-08-08 — Codebase Synchronization and Audit (model: Gemini 3.5 Flash)
 - **Summary:** Pulled latest commits from origin/main, including the normalization of startup funding values and removal of the Financial Intelligence feature/route. Resolved checked-in git merge conflicts in `memory.md` and ran a clean production build check.
 - **Files:** `memory.md`.

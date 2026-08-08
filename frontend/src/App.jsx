@@ -27,6 +27,7 @@ export const useProductTour = () => useContext(ProductTourContext);
 // Route-level code splitting keeps the initial bundle lean; heavy pages
 // (charts, graph, autopsy parser) only load when navigated to.
 const LandingPage = lazy(() => import('./pages/LandingPage'));
+const NewLandingPage = lazy(() => import('./pages/NewLandingPage'));
 const FailureExplorer = lazy(() => import('./pages/FailureExplorer'));
 const PostmortemPage = lazy(() => import('./pages/PostmortemPage'));
 const RiskScanner = lazy(() => import('./pages/RiskScanner'));
@@ -164,7 +165,8 @@ function AppContent() {
               <main className="pv-app-main">
                 <Suspense fallback={<RouteFallback />}>
                   <Routes>
-                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/" element={<NewLandingPage />} />
+                    <Route path="/dashboard" element={<LandingPage />} />
                     <Route path="/explore" element={<FailureExplorer />} />
                     <Route path="/startup/:slug" element={<PostmortemPage />} />
                     <Route path="/scan" element={<ProtectedRoute><RiskScanner /></ProtectedRoute>} />
