@@ -161,6 +161,11 @@ PivotVault combines:
 <th align="left">What it does</th>
 </tr>
 <tr>
+<td>00</td>
+<td><strong>🏠 Isolated Landing Page</strong></td>
+<td>An isolated, pixel-perfect Apple-inspired SaaS showcase page (/) that hosts high-fidelity mockups of features, suggested questions, timelines, and relationships, routing seamlessly into the application.</td>
+</tr>
+<tr>
 <td>01</td>
 <td><strong>🪦 Failure Explorer</strong></td>
 <td>Search historical startup failures — postmortems, timelines, funding history, founders, and the exact reasons each company shut down.</td>
@@ -371,8 +376,11 @@ pivotvault/
 │   └── package.json
 │
 └── frontend/
+    ├── public/
+    │   └── landing.html             # Style-isolated public landing page
     ├── src/
     │   ├── pages/
+    │   │   ├── NewLandingPage.jsx   # Isolated landing page wrapper
     │   │   ├── AiAssistant.jsx
     │   │   ├── RiskScanner.jsx
     │   │   ├── FounderPlaybook.jsx
