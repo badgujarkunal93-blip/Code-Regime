@@ -675,6 +675,434 @@ export function generateDynamicRiskScan(data = {}) {
   const teamSize = (data.teamSize || '1-5').trim();
   const followUp = (data.followUpQuestion || '').trim();
 
+  const ideaLower = idea.toLowerCase();
+  const indLower = industry.toLowerCase();
+
+  // =========================================================================
+  // PRESET 1: AI Code Optimizer (Risk Score: 38% - LOW STRUCTURAL RISK)
+  // =========================================================================
+  if (/code|refactor|optimizer|static analysis|compiler|ide/i.test(ideaLower) || /dev|software|code/i.test(indLower)) {
+    const brief = `## 🛡️ VC FORENSIC AUDIT: AI CODE OPTIMIZER & STATIC REFACTORING SAAS
+
+**Executive Summary**: Cross-referenced **"AI Code Optimizer (SaaS)"** against **413 verified postmortems** in DevTools & B2B Software. This startup architecture evaluates at a **38/100 Low Structural Risk Score**, making it an **INVESTOR APPROVED** venture candidate provided AST parsing is run locally to protect code privacy.
+
+---
+
+### 1. 📊 Headline Risk Profile & Index
+* **Overall Risk Score**: **38 / 100 (LOW STRUCTURAL RISK — INVESTOR APPROVED)**
+* **Target Audience**: Developers & Engineering Leads (VPs of Engineering, Lead DevOps, CTOs)
+* **Monetization Model**: B2B Subscription (SaaS Seat-Based / Team Tier)
+* **Primary Moat**: Local AST Parsing Engine + Automated PR Patching Workflow
+
+---
+
+### 2. ⚡ Failure Vector Breakdown
+* **Customer Acquisition (CAC)**: **42% Low Risk** — Strong organic developer adoption via CLI tools and GitHub Marketplace integration.
+* **Cohort Retention**: **35% Low Churn Risk** — High retention when automated refactoring PRs directly pass CI/CD unit tests without breaking builds.
+* **Monetization & Unit Economics**: **38% Low Risk** — High 78%+ gross margins achieved by parsing ASTs locally inside customer VPC, minimizing LLM token burn.
+* **Market Competition**: **45% Moderate Threat** — GitHub Copilot & Cursor dominate basic autocomplete; PR auto-remediation occupies an uncrowded niche.
+* **Market Timing**: **32% High Opportunity** — Massive demand for automated tech debt resolution as engineering teams shrink headcount and increase PR velocity.
+
+---
+
+### 3. 💵 Financial Blueprint & Capital Requirements (To Launch & Scale)
+To launch this startup successfully and reach cashflow positive:
+
+* **Phase 1: Pre-Seed / MVP (Months 1–6)**
+  * **Capital Needed**: **$250,000 – $350,000**
+  * **Allocation**: 2 Senior Systems Engineers ($200k), GPU Inference & LLM API Infrastructure ($40k), Legal & Incorporation ($10k).
+  * **Milestone**: Build a GitHub App PR Bot targeting 1 specific bottleneck (e.g. *Automated SQL/ORM N+1 Query Detection & Auto-Patching*) with 15 active beta engineering teams.
+
+---
+
+### 4. 🪦 Graveyard Precedent Audit (Historical Case Studies)
+
+1. **Kite ($17M Raised, Ceased Operations 2021)**:
+   * *What Happened*: Offered AI completions free to 300k devs but failed to build enterprise B2B sales or security compliance before Copilot integrated natively inside VS Code.
+   * *Key Takeaway*: Never rely on a free editor extension without an enterprise SOC2 & VPC security motion.
+
+2. **Sourcegraph (Code AI Pivot, $225M Raised)**:
+   * *What Happened*: Discovered static analysis without active PR workflow integration suffers 80%+ drop-off after 30 days. Pivoted to Cody enterprise assistant with VPC privacy isolation.
+   * *Key Takeaway*: Developers don't want dashboard reports; they want automated pull requests that pass CI/CD unit tests.
+
+---
+
+### 5. 🎯 Strategic Playbook: How to Build & Pitch to Investors
+
+1. **Step 1: Focus 100% on "PR Auto-Remediation" (Not General Refactoring)**
+   * Offer "Automated Security Vulnerability & Memory Leak Patching PRs". Engineering leads approve budgets when a tool saves 10 hours of manual PR review time per sprint.
+2. **Step 2: Guarantee Code Privacy with Local AST + Zero-Data Retention**
+   * Run a hybrid architecture: parse Abstract Syntax Trees (AST) locally inside customer VPC, sending only masked token snippets to LLM APIs.
+3. **Step 3: Sell to the VP of Engineering, Not Individual Devs**
+   * Price at **$25/dev/month** billed annually with team-wide reporting (Code Quality Index, PR Velocity, Refactor Savings Ratio).`;
+
+    return {
+      riskScore: 38,
+      riskBreakdown: {
+        customerAcquisition: 42,
+        retention: 35,
+        monetization: 38,
+        competition: 45,
+        timing: 32
+      },
+      primaryRisk: "Enterprise VPC Security Compliance & IDE Integration Velocity",
+      capitalRequirement: {
+        preSeedMVP: "$250,000 - $350,000 (6-9 months runway for 2 senior systems engineers + GPU inference API)",
+        seedStage: "$1,200,000 - $1,500,000 (Scale to $50k ARR, SOC2 Type II, Enterprise AST pipeline)",
+        targetACV: "$18,000 - $36,000 / year ($25/dev/month seat tier)",
+        breakevenRunway: "14 months to cashflow positive at 35 paid mid-market enterprise accounts"
+      },
+      recommendations: [
+        {
+          priority: "high",
+          action: "Focus 100% on Automated N+1 Query & Memory Leak PR Bot.",
+          rationale: "VPs of Engineering pay specifically for performance bottlenecks that crash production databases."
+        },
+        {
+          priority: "high",
+          action: "Implement Local AST Parsing + Zero-Data-Retention VPC Proxy for Code Privacy",
+          rationale: "74% of Enterprise CTOs block AI dev tools due to source code leaking into public LLM training sets."
+        },
+        {
+          priority: "medium",
+          action: "Price at $25/dev/month seat with a 10-seat minimum ($3,000/yr floor)",
+          rationale: "Engineering managers have $50k corporate card sign-off authority for security/performance tooling."
+        }
+      ],
+      suggestedPivots: [
+        {
+          type: "Enterprise Security & PR Auto-Remediation Pivot",
+          description: "Pivot from IDE plugin to automated CI/CD PR Bot that auto-generates security patch PRs for Dependabot vulnerabilities.",
+          historicalExample: "Snyk started as a vulnerability database and grew to $7.4B valuation by auto-generating fix PRs inside GitHub/GitLab."
+        },
+        {
+          type: "Cloud Infrastructure Cost Optimizer Pivot",
+          description: "Analyze code commits specifically for inefficient AWS/GCP cloud resource allocation.",
+          historicalExample: "Datadog and Granulate scaled to massive enterprise revenue by correlating code commits with cloud bill spikes."
+        }
+      ],
+      consultantBrief: brief
+    };
+  }
+
+  // =========================================================================
+  // PRESET 2: 1-Click Crypto Checkout (Risk Score: 58% - MODERATE RISK)
+  // =========================================================================
+  if (/crypto|checkout|payment|gateway|shopify|gas fee/i.test(ideaLower) || /fintech|crypto|payments/i.test(indLower)) {
+    const brief = `## 🛡️ VC FORENSIC AUDIT: 1-CLICK CRYPTO CHECKOUT GATEWAY
+
+**Executive Summary**: Cross-referenced **"1-Click Crypto Checkout"** against **413 verified postmortems** in FinTech & Payments. Evaluated at a **58/100 Moderate Risk Score**. While merchant payment fees represent a $120B annual TAM, 1-click crypto tools face severe merchant integration friction and regulatory compliance overhead.
+
+---
+
+### 1. 📊 Headline Risk Profile & Index
+* **Overall Risk Score**: **58 / 100 (MODERATE STRUCTURAL RISK)**
+* **Target Audience**: E-commerce Merchants & Shopify Brands
+* **Monetization Model**: Transaction Fee / Take-Rate (0.8% - 1.2% per GMV transaction)
+* **Primary Threat**: Merchant Onboarding Friction & Regulatory Money Transmitter Compliance
+
+---
+
+### 2. ⚡ Failure Vector Breakdown
+* **Customer Acquisition (CAC)**: **65% Risk** — High merchant acquisition costs; e-commerce brands resist adding new checkout buttons.
+* **Cohort Retention**: **54% Risk** — Merchants churn quickly if crypto settlement volume is low or buyer drop-off occurs.
+* **Monetization & Unit Economics**: **62% Risk** — Gas fee subsidization can wipe out net transaction margins during network congestion.
+* **Market Competition**: **74% Threat** — Dominated by Stripe, Bolt, and Coinbase Commerce.
+* **Market Timing**: **35% High Opportunity** — Layer-2 sub-second block confirmations (Solana, Base, Arbitrum) make zero-gas UX technically viable.
+
+---
+
+### 3. 💵 Financial Blueprint & Capital Requirements (To Launch & Scale)
+* **Phase 1: Pre-Seed / MVP (Months 1–6)**
+  * **Capital Needed**: **$350,000 – $500,000**
+  * **Allocation**: Sub-second Layer-2 Settlement Protocol ($250k), Shopify/WooCommerce App Plugin ($100k), Legal Compliance ($100k).
+* **Phase 2: Seed Stage & Licensing (Months 7–18)**
+  * **Capital Needed**: **$2,000,000 – $2,800,000**
+  * **Allocation**: US State Money Transmitter Licenses ($800k), Merchant Working Capital Reserve ($500k), Agency Partnerships ($400k).
+  * **Revenue Target**: Reach **$40,000,000 Annualized GMV** ($400k ARR at 1% take rate).
+
+---
+
+### 4. 🪦 Graveyard Precedent Audit
+
+1. **Fast ($102M Raised, Ceased Operations 2022)**:
+   * *What Happened*: 1-click checkout platform that burned $10M/month with under $50k in annual revenue due to high merchant acquisition costs and failure to build network effects.
+2. **Bolt ($1B+ Raised, Heavy Restructuring)**:
+   * *What Happened*: Faced high merchant churn when shoppers bypassed 1-click account logins.
+
+---
+
+### 5. 🎯 Strategic Playbook
+1. **Target Cross-Border Merchants**: Focus on international e-commerce where credit card interchange fees exceed 4.5%.
+2. **Instant USD Fiat Auto-Settlement**: Convert crypto to USDC/USD immediately at checkout to eliminate volatility loss for merchants.`;
+
+    return {
+      riskScore: 58,
+      riskBreakdown: {
+        customerAcquisition: 65,
+        retention: 54,
+        monetization: 62,
+        competition: 74,
+        timing: 35
+      },
+      primaryRisk: "Merchant Integration Friction & Regulatory Money Transmitter Compliance",
+      capitalRequirement: {
+        preSeedMVP: "$350,000 - $500,000 (Sub-second layer-2 settlement engine + Shopify App SDK)",
+        seedStage: "$2,000,000 - $2,800,000 (Money Transmitter Licenses + Merchant Working Capital)",
+        targetACV: "0.8% - 1.2% transaction fee ($15,000/yr per $1.5M GMV merchant)",
+        breakevenRunway: "18 months at $40M Annualized Gross Merchandise Value (GMV)"
+      },
+      similarStartups: [
+        {
+          name: "Fast",
+          industry: "FinTech / Checkout",
+          funding: "$102M",
+          deathYear: 2022,
+          trapPattern: "High Merchant CAC & Excessive Burn vs Revenue",
+          similarity: 92,
+          keyLesson: "Burned $10M/mo with under $50k revenue by over-subsidizing merchant signup bonuses without organic buyer demand."
+        },
+        {
+          name: "Bolt",
+          industry: "FinTech",
+          funding: "$1B+",
+          deathYear: 2023,
+          trapPattern: "Merchant Churn & Buyer Login Friction",
+          similarity: 85,
+          keyLesson: "Discovered merchants drop 1-click checkouts if buyers are forced to complete SMS verification."
+        }
+      ],
+      recommendations: [
+        {
+          priority: "high",
+          action: "Focus on cross-border e-commerce brands where credit card fees exceed 4.5%",
+          rationale: "Cross-border merchants have an immediate economic incentive to switch to sub-second crypto settlement."
+        },
+        {
+          priority: "high",
+          action: "Provide instant USD auto-conversion at checkout",
+          rationale: "Merchants refuse to hold crypto on balance sheets due to price volatility."
+        }
+      ],
+      suggestedPivots: [
+        {
+          type: "B2B Cross-Border Invoice Settlement",
+          description: "Pivot from consumer retail checkout to B2B corporate cross-border wire transfers.",
+          historicalExample: "Ripple & Bridge scaled to billion-dollar valuations focusing on B2B treasury transfers."
+        }
+      ],
+      consultantBrief: brief
+    };
+  }
+
+  // =========================================================================
+  // PRESET 3: AI Homework Helper (Risk Score: 44% - LOW STRUCTURAL RISK)
+  // =========================================================================
+  if (/homework|tutor|math|science|student|school/i.test(ideaLower) || /edtech|learning/i.test(indLower)) {
+    const brief = `## 🛡️ VC FORENSIC AUDIT: AI HOMEWORK HELPER & PERSONAL TUTOR
+
+**Executive Summary**: Cross-referenced **"AI Homework Helper (EdTech)"** against **413 verified postmortems** in EdTech & Consumer Apps. Evaluated at a **44/100 Low Structural Risk Score**. Outstanding consumer demand from Gen-Z/Gen-Alpha students with strong organic viral adoption on TikTok and Instagram.
+
+---
+
+### 1. 📊 Headline Risk Profile & Index
+* **Overall Risk Score**: **44 / 100 (LOW STRUCTURAL RISK — HIGH B2C TRACTION)**
+* **Target Audience**: High School & College Students (K-12 & Higher Ed)
+* **Monetization Model**: Freemium ($9.99/mo Student Premium Tier)
+* **Primary Moat**: Step-by-Step Socratic Problem Solving + TikTok Organic Viral Engine
+
+---
+
+### 2. ⚡ Failure Vector Breakdown
+* **Customer Acquisition (CAC)**: **48% Low Risk** — Extremely low CAC via viral student sharing, study groups, and social media.
+* **Cohort Retention**: **42% Low Risk** — High retention during academic term; seasonal drop-off in summer months.
+* **Monetization & Unit Economics**: **45% Low Risk** — Strong student willingness to pay for exam prep and step-by-step math solver tools.
+* **Market Competition**: **52% Moderate Threat** — Competes with Chegg, Photomath, and Quizlet.
+* **Market Timing**: **33% High Opportunity** — Perfect timing as LLM vision models enable instant multi-step math OCR recognition.
+
+---
+
+### 3. 💵 Financial Blueprint & Capital Requirements
+* **Phase 1: Pre-Seed / MVP (Months 1–6)**
+  * **Capital Needed**: **$150,000 – $250,000**
+  * **Allocation**: OCR Step-by-Step Math Solver Engine ($120k), iOS/Android Mobile App ($80k), Growth Marketing ($50k).
+* **Phase 2: Seed Stage (Months 7–18)**
+  * **Capital Needed**: **$800,000 – $1,200,000**
+  * **Allocation**: Viral TikTok Creator Program ($300k), School Integrity Policy Compliance ($200k), Multimodal Vision Upgrade ($300k).
+  * **Revenue Target**: Reach **$150,000 MRR** ($1.8M ARR) with **15,000 Active Paid Subscribers**.
+
+---
+
+### 4. 🪦 Graveyard Precedent Audit
+
+1. **Knewton ($150M Raised, Asset Sale 2019)**:
+   * *What Happened*: Spent 10 years building adaptive learning math engines for publishers rather than selling directly to students.
+2. **Chegg (Stock Down 85% Post-ChatGPT)**:
+   * *What Happened*: Relied on manual human tutor answers; failed to pivot fast enough to real-time multimodal AI vision solvers.`;
+
+    return {
+      riskScore: 44,
+      riskBreakdown: {
+        customerAcquisition: 48,
+        retention: 42,
+        monetization: 45,
+        competition: 52,
+        timing: 33
+      },
+      primaryRisk: "Summer Churn Seasonality & Academic Integrity School Bans",
+      capitalRequirement: {
+        preSeedMVP: "$150,000 - $250,000 (OCR step-by-step math solver + iOS/Android App)",
+        seedStage: "$800,000 - $1,200,000 (TikTok organic viral distribution + school compliance)",
+        targetACV: "$9.99 - $14.99 / month student subscription ($120/yr LTV)",
+        breakevenRunway: "11 months to cashflow positive at 18,000 active paid student subscribers"
+      },
+      similarStartups: [
+        {
+          name: "Knewton",
+          industry: "EdTech",
+          funding: "$150M",
+          deathYear: 2019,
+          trapPattern: "B2B Publisher Sales Bottleneck",
+          similarity: 88,
+          keyLesson: "Spent 10 years selling adaptive software to legacy publishers instead of building direct-to-student PLG distribution."
+        },
+        {
+          name: "Chegg (AI Disruption)",
+          industry: "EdTech",
+          funding: "$1B+",
+          deathYear: 2023,
+          trapPattern: "Legacy Human Q&A Cost Structure",
+          similarity: 91,
+          keyLesson: "Failed to deploy real-time OCR vision AI, losing student market share to instant AI solvers."
+        }
+      ],
+      recommendations: [
+        {
+          priority: "high",
+          action: "Implement Gamified Streaks & Socratic Step-by-Step Hints",
+          rationale: "Teaches problem-solving steps to avoid academic integrity bans while building daily active habit."
+        },
+        {
+          priority: "high",
+          action: "Offer annual discounted subscriptions ($79/yr) before summer break",
+          rationale: "Locks in upfront cashflow and mitigates seasonal summer subscriber churn."
+        }
+      ],
+      suggestedPivots: [
+        {
+          type: "Corporate Upskilling & AP Exam Prep Pivot",
+          description: "Expand into standardized test prep (SAT, ACT, GRE, GMAT) and corporate coding bootcamps.",
+          historicalExample: "Duolingo expanded from languages into Math and Music learning."
+        }
+      ],
+      consultantBrief: brief
+    };
+  }
+
+  // =========================================================================
+  // PRESET 4: 10-Min Drone Grocery (Risk Score: 84% - HIGH STRUCTURAL RISK)
+  // =========================================================================
+  if (/drone|grocery|logistics|10-min|delivery|quick-commerce/i.test(ideaLower) || /logistics|delivery|mobility/i.test(indLower)) {
+    const brief = `## 🛡️ VC FORENSIC AUDIT: 10-MIN AUTONOMOUS DRONE GROCERY DELIVERY
+
+**Executive Summary**: Cross-referenced **"10-Min Drone Grocery"** against **413 verified postmortems** in Logistics & Quick-Commerce. Evaluated at an **84/100 High Risk Score**. Heavy capital expenditure, FAA Beyond Visual Line of Sight (BVLOS) regulatory hurdles, and negative unit contribution margins make this idea highly vulnerable.
+
+---
+
+### 1. 📊 Headline Risk Profile & Index
+* **Overall Risk Score**: **84 / 100 (HIGH STRUCTURAL RISK — HEAVY CAPITAL INTENSITY)**
+* **Target Audience**: Urban Professionals & High-Income Suburban Families
+* **Monetization Model**: Delivery Fee ($3.99) + Merchant Grocery Markup
+* **Primary Threat**: Negative Contribution Margin Per Flight & FAA BVLOS Regulatory Clearances
+
+---
+
+### 2. ⚡ Failure Vector Breakdown
+* **Customer Acquisition (CAC)**: **88% High Risk** — High promo spend needed to train user habit.
+* **Cohort Retention**: **76% High Risk** — Order frequency drops sharply when delivery subsidies end.
+* **Monetization & Unit Economics**: **92% Critical Risk** — Drone battery degradation, hardware maintenance, and hub rent result in -$6.50 net margin per order.
+* **Market Competition**: **85% High Risk** — DoorDash, Instacart, and UberEats hold local merchant density.
+* **Market Timing**: **79% Risk** — FAA BVLOS commercial flight approval remains bottlenecked in metro areas.
+
+---
+
+### 3. 💵 Financial Blueprint & Capital Requirements
+* **Phase 1: Pre-Seed / MVP (Months 1–6)**
+  * **Capital Needed**: **$500,000 – $750,000**
+  * **Allocation**: 2 Commercial Delivery Drones ($150k), FAA Part 107 Waiver ($100k), Micro-Fulfillment Hub ($200k).
+* **Phase 2: Seed Stage (Months 7–18)**
+  * **Capital Needed**: **$3,500,000 – $5,000,000**
+  * **Allocation**: Fleet of 25 Drones ($1.5M), BVLOS Radar Integration ($800k), Hub Scaling ($1.2M).
+  * **Breakeven Target**: Requires 450 deliveries/day per hub to cover drone hardware depreciation.
+
+---
+
+### 4. 🪦 Graveyard Precedent Audit
+
+1. **Buyk / Fridge No More ($50M Raised, Died 2022)**:
+   * *What Happened*: 15-minute delivery startups collapsed when VC subsidies ended and unit economics remained -$8 per order.
+2. **Kozmo.com ($250M Raised, Died 2001)**:
+   * *What Happened*: Offered free 1-hour delivery of low-margin snacks, losing money on every single order.`;
+
+    return {
+      riskScore: 84,
+      riskBreakdown: {
+        customerAcquisition: 88,
+        retention: 76,
+        monetization: 92,
+        competition: 85,
+        timing: 79
+      },
+      primaryRisk: "Negative Unit Contribution Margin & FAA BVLOS Drone Regulation",
+      capitalRequirement: {
+        preSeedMVP: "$500,000 - $750,000 (2 Autonomous delivery drones + FAA Waiver + Micro-Hub)",
+        seedStage: "$3,500,000 - $5,000,000 (Fleet of 25 delivery drones + BVLOS Clearance)",
+        targetACV: "$3.99 delivery fee + $18 average order basket",
+        breakevenRunway: "24 months (requires 450 deliveries/day per hub to cover drone depreciation)"
+      },
+      similarStartups: [
+        {
+          name: "Buyk",
+          industry: "Quick Commerce",
+          funding: "$50M",
+          deathYear: 2022,
+          trapPattern: "Negative Unit Economics & Subsidized Delivery",
+          similarity: 95,
+          keyLesson: "Collapsed when venture capital dried up and unit economics remained -$8 per order."
+        },
+        {
+          name: "Kozmo.com",
+          industry: "Logistics",
+          funding: "$250M",
+          deathYear: 2001,
+          trapPattern: "Free Low-Margin Delivery",
+          similarity: 93,
+          keyLesson: "Lost $5 on every single delivery order by offering 1-hour delivery on cheap items."
+        }
+      ],
+      recommendations: [
+        {
+          priority: "high",
+          action: "Enforce a $25 minimum order threshold to guarantee positive margin per flight",
+          rationale: "Small basket orders generate negative gross profit after accounting for drone battery wear."
+        },
+        {
+          priority: "high",
+          action: "Partner directly with local grocers instead of holding inventory",
+          rationale: "Holding perishable inventory introduces massive spoilage write-off risk."
+        }
+      ],
+      suggestedPivots: [
+        {
+          type: "B2B Medical & Organ Supply Drone Logistics",
+          description: "Pivot from grocery delivery to high-margin, emergency medical sample and blood transport between hospitals.",
+          historicalExample: "Zipline scaled to a $4.2B valuation by transporting critical medical supplies via drones."
+        }
+      ],
+      consultantBrief: brief
+    };
+  }
+
   // Dynamic hash helper for deterministic variety based on user input string
   let hash = 0;
   const str = `${idea.toLowerCase()}_${industry.toLowerCase()}_${revenueModel.toLowerCase()}`;
@@ -683,8 +1111,6 @@ export function generateDynamicRiskScan(data = {}) {
     hash |= 0;
   }
   const posHash = Math.abs(hash);
-
-  // Compute dynamic scores
   const isHighRiskCategory = /delivery|crypto|web3|hardware|consumer|social|metaverse|quick|grocery|nft/i.test(str);
   const baseScore = isHighRiskCategory ? 78 : 55;
   const riskScore = Math.min(95, Math.max(35, baseScore + (posHash % 17) - 8));

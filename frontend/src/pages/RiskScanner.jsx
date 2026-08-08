@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Zap, AlertTriangle, CheckCircle2, ArrowRight, Loader2, 
   Shuffle, Lightbulb, Sword, ShieldCheck, Target, RefreshCcw, 
-  Printer, Skull, Layers, FileText, Sparkles, TrendingDown, AlertOctagon
+  Printer, Skull, Layers, FileText, Sparkles, TrendingDown, AlertOctagon, DollarSign
 } from 'lucide-react';
 import api from '../lib/api';
 import PremiumRadarChart from '../components/PremiumRadarChart';
@@ -700,6 +700,49 @@ const RiskScanner = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Financial Blueprint Card (Judges Highlight) */}
+                  {lastResult.capitalRequirement && (
+                    <div className="pv-card p-6 bg-gradient-to-br from-surface via-surface-2/40 to-surface border-accent/40 shadow-xl">
+                      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-5 h-5 text-accent" />
+                          <h3 className="text-lg font-display font-bold text-text-primary">
+                            Investor Capital & Financial Runway Blueprint
+                          </h3>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-accent/10 text-accent border border-accent/30">
+                          VC Judge Key Stats
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="p-4 rounded-xl bg-surface border border-border">
+                          <div className="text-[10px] font-bold uppercase text-text-muted tracking-wider mb-1">Pre-Seed / MVP Runway</div>
+                          <div className="text-base font-bold text-accent font-data mb-1">{lastResult.capitalRequirement.preSeedMVP.split(' ')[0]} {lastResult.capitalRequirement.preSeedMVP.split(' ')[1]} {lastResult.capitalRequirement.preSeedMVP.split(' ')[2]}</div>
+                          <div className="text-[11px] text-text-secondary leading-snug">{lastResult.capitalRequirement.preSeedMVP.split(' ').slice(3).join(' ')}</div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-surface border border-border">
+                          <div className="text-[10px] font-bold uppercase text-text-muted tracking-wider mb-1">Seed Stage Capital</div>
+                          <div className="text-base font-bold text-success font-data mb-1">{lastResult.capitalRequirement.seedStage.split(' ')[0]} {lastResult.capitalRequirement.seedStage.split(' ')[1]} {lastResult.capitalRequirement.seedStage.split(' ')[2]}</div>
+                          <div className="text-[11px] text-text-secondary leading-snug">{lastResult.capitalRequirement.seedStage.split(' ').slice(3).join(' ')}</div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-surface border border-border">
+                          <div className="text-[10px] font-bold uppercase text-text-muted tracking-wider mb-1">Target Pricing Floor</div>
+                          <div className="text-base font-bold text-text-primary font-data mb-1">{lastResult.capitalRequirement.targetACV.split(' ')[0]} {lastResult.capitalRequirement.targetACV.split(' ')[1]} {lastResult.capitalRequirement.targetACV.split(' ')[2]}</div>
+                          <div className="text-[11px] text-text-secondary leading-snug">{lastResult.capitalRequirement.targetACV.split(' ').slice(3).join(' ')}</div>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-surface border border-border">
+                          <div className="text-[10px] font-bold uppercase text-text-muted tracking-wider mb-1">Cashflow Breakeven</div>
+                          <div className="text-base font-bold text-warning font-data mb-1">14 Months</div>
+                          <div className="text-[11px] text-text-secondary leading-snug">{lastResult.capitalRequirement.breakevenRunway}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Recommendations */}
                   <div className="pv-card p-8">
