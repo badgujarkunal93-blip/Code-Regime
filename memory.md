@@ -499,6 +499,13 @@ cd backend && npm install
 - **Files:** `frontend/src/lib/mockApi.js`, `frontend/src/lib/api.js`, `backend/src/routes/startups.js`, `memory.md`.
 - **Verification:** Tested live in Chrome DevTools on `http://localhost:5173/explore`. Filtered by `Consumer Hardware` (22 results), `unit_economics` + `funding` desc (194 results). Build clean (0 errors).
 
+### Session 10 — 2026-08-07 — Intro Crowd Animation Removal (model: Gemini 3.6 Flash)
+- **Removed Splash Loading Screen**: Disabled `PivotVaultIntro` crowd loading animation trigger in `frontend/src/App.jsx`. The application now loads instantly to the main dashboard/shell upon visit or refresh without delay.
+- **Preserved App Functionality**: All routing, onboarding modals, product tour, protected routes, and page interactions remain 100% intact.
+- **Files:** `frontend/src/App.jsx`, `memory.md`.
+- **Verification:** Verified live in Chrome DevTools. Navigated to `http://localhost:5173/` — page loads instantly without crowd loader delay. Build clean (0 errors). Not pushed per user directive.
+
+
 
 
 

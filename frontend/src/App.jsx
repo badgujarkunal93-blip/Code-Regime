@@ -116,7 +116,6 @@ function AppContent() {
     return saved ? JSON.parse(saved) : true;
   });
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
-  const [showIntro, setShowIntro] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const { isLoading, loadingMessage } = useLoading();
 
@@ -131,21 +130,8 @@ function AppContent() {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
-  useEffect(() => {
-    const hasSeenIntro = sessionStorage.getItem('pivotvault_intro_seen');
-    if (!hasSeenIntro) {
-      setShowIntro(true);
-    }
-  }, []);
-
-  const handleIntroComplete = () => {
-    sessionStorage.setItem('pivotvault_intro_seen', 'true');
-    setShowIntro(false);
-  };
-
-  if (showIntro) {
-    return <PivotVaultIntro onComplete={handleIntroComplete} />;
-  }
+  // Intro loading animation removed for instant app loading
+  const showIntro = false;
 
   const handleTourComplete = () => {
     localStorage.setItem(ONBOARDED_KEY, '1');
